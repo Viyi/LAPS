@@ -69,14 +69,15 @@ public class pokeplayer {
 	
 	public static void click(WebDriver driver, By selector) {
 		WebDriverWait wait = new WebDriverWait(driver, waitTime);
-		
+		//Waits until it finds the element then clicks
 		wait.until(ExpectedConditions.elementToBeClickable(selector));
 		driver.findElement(selector).click();
 	}
 	
+	
 	public static void type(WebDriver driver, By selector, String input) {
 		WebDriverWait wait = new WebDriverWait(driver, waitTime);
-		
+		//Waits until it finds the element then sends keys
 		wait.until(ExpectedConditions.elementToBeClickable(selector));
 		driver.findElement(selector).sendKeys(input);
 	}
@@ -84,7 +85,7 @@ public class pokeplayer {
 	
 	
 	public static void login(WebDriver driver){
-		//
+		//login to pokemon showdown
 		WebDriverWait wait = new WebDriverWait(driver, waitTime);
 		
 		String username = getInfo();
@@ -92,9 +93,9 @@ public class pokeplayer {
 		username = username.substring(0,username.indexOf("-"));
 		System.out.println(username);
 		System.out.println(password);
-		
+		//get password from file
 		driver.get("https://play.pokemonshowdown.com/");
-		
+		//go to pokemon showdown
 		click(driver,By.cssSelector(".userbar > button:nth-child(1)"));
 		type(driver, By.cssSelector(".textbox"), username);
 		click(driver,By.cssSelector(".buttonbar > button:nth-child(1)"));
