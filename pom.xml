@@ -11,6 +11,13 @@
         </repository>
     </repositories>
   <dependencies>
+  <dependency>
+    <groupId>com.codeborne</groupId>
+    <artifactId>selenide</artifactId>
+    <version>4.10.01</version>
+    <scope>test</scope>
+</dependency>
+  
   	<!-- https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java -->
 <dependency>
     <groupId>org.seleniumhq.selenium</groupId>

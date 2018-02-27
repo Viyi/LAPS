@@ -10,6 +10,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
@@ -31,7 +33,7 @@ import me.sargunvohra.lib.pokekotlin.model.PokemonSpeciesDexEntry;
 
 
 public class pokeplayer {
-	
+	public static int waitTime = 3;
 	public pokeplayer() {
 		
 		
@@ -65,7 +67,26 @@ public class pokeplayer {
 		return full;
 	}
 	
+	public static void click(WebDriver driver, By selector) {
+		WebDriverWait wait = new WebDriverWait(driver, waitTime);
+		
+		wait.until(ExpectedConditions.elementToBeClickable(selector));
+		driver.findElement(selector).click();
+	}
+	
+	public static void type(WebDriver driver, By selector, String input) {
+		WebDriverWait wait = new WebDriverWait(driver, waitTime);
+		
+		wait.until(ExpectedConditions.elementToBeClickable(selector));
+		driver.findElement(selector).sendKeys(input);
+	}
+	
+	
+	
 	public static void login(WebDriver driver){
+		//
+		WebDriverWait wait = new WebDriverWait(driver, waitTime);
+		
 		String username = getInfo();
 		String password = username.substring(username.indexOf("-")+1);
 		username = username.substring(0,username.indexOf("-"));
@@ -74,7 +95,11 @@ public class pokeplayer {
 		
 		driver.get("https://play.pokemonshowdown.com/");
 		
-		driver.findElement(By.cssSelector("input[type='button'][value='Open device access']")).click();
+		click(driver,By.cssSelector(".userbar > button:nth-child(1)"));
+		type(driver, By.cssSelector(".textbox"), username);
+		click(driver,By.cssSelector(".buttonbar > button:nth-child(1)"));
+		type(driver, By.cssSelector(".textbox"), password);
+		click(driver,By.cssSelector(".buttonbar > button:nth-child(1)"));
 		
 	}
 	
