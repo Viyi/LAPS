@@ -28,10 +28,10 @@ import me.sargunvohra.lib.pokekotlin.model.Pokemon;
 import me.sargunvohra.lib.pokekotlin.model.PokemonSpecies;
 import me.sargunvohra.lib.pokekotlin.model.PokemonSpeciesDexEntry;
 
-public class pokeplayer {
+public class PokePlayer {
 	public static int waitTime = 3;
 
-	public pokeplayer() {
+	public PokePlayer() {
 
 	}
 
@@ -44,10 +44,9 @@ public class pokeplayer {
 		try (
 
 				// windows
-				// InputStream fis = new FileInputStream("C:\\Program
-				// Files\\pokebot\\login.txt");
+				 InputStream fis = new FileInputStream("C:\\Program Files\\pokebot\\login.txt");
 				// linux
-				InputStream fis = new FileInputStream("/Program Files/login");
+				//InputStream fis = new FileInputStream("/Program Files/login");
 
 				InputStreamReader isr = new InputStreamReader(fis, Charset.forName("UTF-8"));
 				BufferedReader br = new BufferedReader(isr);) {

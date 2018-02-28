@@ -32,9 +32,10 @@ public class Pokedex {
 		String line;
 		String full = "";
 		try (
-
-				// InputStream fis = new FileInputStream("\programpokedex.txt");
-				InputStream fis = new FileInputStream("/Program Files/pokedex.txt");
+				//windows
+				 InputStream fis = new FileInputStream("C:\\Program Files\\pokebot\\pokedex.txt");
+				//linux
+				//InputStream fis = new FileInputStream("/Program Files/pokedex.txt");
 				InputStreamReader isr = new InputStreamReader(fis, Charset.forName("UTF-8"));
 				BufferedReader br = new BufferedReader(isr);) {
 			while ((line = br.readLine()) != null) {
@@ -99,12 +100,13 @@ public class Pokedex {
 		double[] tempType = new double[18];
 		for (int a = 0; a < 18; a++) {
 
-			if (tempType[a] == 5) {
-				tempType[a] = .5;
+			if (Double.parseDouble(line.substring(a,a+1)) == 5) {
+				tempType[a] = 0.5;
+		
 			} else {
-				System.out.println("char at" + line.charAt(a));
-				tempType[a] = line.charAt(a);
-				System.out.println("char at" + tempType[a]);
+			
+				tempType[a] = Double.parseDouble(line.substring(a,a+1));
+				
 			}
 		}
 
@@ -120,8 +122,10 @@ public class Pokedex {
 
 		int count = 0;
 		try (
-
-				InputStream fis = new FileInputStream("/Program Files/typing");
+				//windows
+				InputStream fis = new FileInputStream("C:\\Program Files\\pokebot\\typing.txt");
+				//linux
+				//InputStream fis = new FileInputStream("/Program Files/typing");
 				InputStreamReader isr = new InputStreamReader(fis, Charset.forName("UTF-8"));
 				BufferedReader br = new BufferedReader(isr);) {
 			while ((line = br.readLine()) != null) {
@@ -129,7 +133,7 @@ public class Pokedex {
 				if (count == type1) {
 					for (int a = 0; a < 18; a++) {
 						matchup[a] *= getTypeArray(line)[a];
-						System.out.println("typearray" + getTypeArray(line)[a]);
+						
 					}
 				} else if (count == type2) {
 					for (int a = 0; a < 18; a++) {
@@ -156,7 +160,7 @@ public class Pokedex {
 		// System.out.println(dex.matchups("machop"));
 
 		for (int a = 0; a < 18; a++) {
-			System.out.println(damageTo(convertType("poison"), convertType("electric"))[a]);
+			System.out.println(a+ ":" + damageTo(convertType("fighting"), -1)[a]);
 		}
 
 		System.out.println("Done!");
