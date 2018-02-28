@@ -47,7 +47,12 @@ public class pokeplayer {
 		String line;
 		String full = "";
 		try (
-		    InputStream fis = new FileInputStream("C:\\Program Files\\pokebot\\login.txt");
+		    
+				//windows
+				//InputStream fis = new FileInputStream("C:\\Program Files\\pokebot\\login.txt");
+				//linux
+				InputStream fis = new FileInputStream("/Program Files/login");	
+				
 		    InputStreamReader isr = new InputStreamReader(fis, Charset.forName("UTF-8"));
 		    BufferedReader br = new BufferedReader(isr);
 		) {
@@ -101,15 +106,21 @@ public class pokeplayer {
 		click(driver,By.cssSelector(".buttonbar > button:nth-child(1)"));
 		type(driver, By.cssSelector(".textbox"), password);
 		click(driver,By.cssSelector(".buttonbar > button:nth-child(1)"));
+		click(driver, By.cssSelector(".autofocus"));
+	}
+	
+	public static void battle() {
+		
 		
 	}
 	
 	
-	
-	
 	public static void main(String[]args) {
 		//loads up gecko driver, and starts firefox
-		System.setProperty("webdriver.gecko.driver","C:\\Program Files\\pokebot\\geckodriver.exe");
+		//windows
+		//System.setProperty("webdriver.gecko.driver","C:\\Program Files\\pokebot\\geckodriver.exe");
+		//linux
+		System.setProperty("webdriver.gecko.driver","/Program Files/geckodriver");
 		WebDriver driver = new FirefoxDriver();
 		
 		login(driver);
@@ -117,7 +128,7 @@ public class pokeplayer {
 		
 
 		
-		//driver.findElement(By.xpath("/html/body/div[1]/div[3]/button[1]")).click();
+		
 		
 		System.out.println("done!");
 		
