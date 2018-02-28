@@ -19,159 +19,148 @@ import me.sargunvohra.lib.pokekotlin.model.PokemonSpecies;
 import me.sargunvohra.lib.pokekotlin.model.Type;
 
 public class Pokedex {
-	
+
 	String pokeString = "";
-	Pokedex(){
-		//upon creation loads a string that has all pokemon in it
-		 pokeString = getPokedex();
+
+	Pokedex() {
+		// upon creation loads a string that has all pokemon in it
+		pokeString = getPokedex();
 	}
 
 	public String getPokedex() {
-		//grabs string from text document pokedex.txt
+		// grabs string from text document pokedex.txt
 		String line;
 		String full = "";
 		try (
-				
 
-		   // InputStream fis = new FileInputStream("\programpokedex.txt");
-			  InputStream fis = new FileInputStream("/Program Files/pokedex.txt");
-		    InputStreamReader isr = new InputStreamReader(fis, Charset.forName("UTF-8"));
-		    BufferedReader br = new BufferedReader(isr);
-		) {
-		    while ((line = br.readLine()) != null) {
-		    	//places each line of pokedex.txt in string
-		    	full+=line;
-		    	
-		    }
+				// InputStream fis = new FileInputStream("\programpokedex.txt");
+				InputStream fis = new FileInputStream("/Program Files/pokedex.txt");
+				InputStreamReader isr = new InputStreamReader(fis, Charset.forName("UTF-8"));
+				BufferedReader br = new BufferedReader(isr);) {
+			while ((line = br.readLine()) != null) {
+				// places each line of pokedex.txt in string
+				full += line;
+
+			}
 		} catch (FileNotFoundException e) {
-			
+
 			e.printStackTrace();
 		} catch (IOException e) {
-			
+
 			e.printStackTrace();
 		}
-		//Returns full pokemon roster to be taken into pokeString
+		// Returns full pokemon roster to be taken into pokeString
 		return full;
-	
+
 	}
-	
+
 	public int getId(String name) {
-		//Takes in a pokemon name, and outputs its id
+		// Takes in a pokemon name, and outputs its id
 		int id = 0;
-		int length = name.length()-1;
+		int length = name.length() - 1;
 		String text = "";
-		//checks if valid pokemon
-		if(pokeString.contains("pokemonSpecies=NamedApiResource(name=" + name)) {
-			//finds the index of the pokemon
-			id = pokeString.indexOf("pokemonSpecies=NamedApiResource(name="+name ) + 68 + length;
-			//checks if text gotten is a string, if so it returns
-			if(StringUtils.isNumeric(pokeString.substring((id+1),id+4))) {
-				text = pokeString.substring((id+1),id+4);
+		// checks if valid pokemon
+		if (pokeString.contains("pokemonSpecies=NamedApiResource(name=" + name)) {
+			// finds the index of the pokemon
+			id = pokeString.indexOf("pokemonSpecies=NamedApiResource(name=" + name) + 68 + length;
+			// checks if text gotten is a string, if so it returns
+			if (StringUtils.isNumeric(pokeString.substring((id + 1), id + 4))) {
+				text = pokeString.substring((id + 1), id + 4);
 				return Integer.parseInt(text);
-			}else if(StringUtils.isNumeric(pokeString.substring((id+1),id+3))) {
-				text = pokeString.substring((id+1),id+3);
+			} else if (StringUtils.isNumeric(pokeString.substring((id + 1), id + 3))) {
+				text = pokeString.substring((id + 1), id + 3);
 				return Integer.parseInt(text);
-			}else if(StringUtils.isNumeric(pokeString.substring((id+1),id+2))){
-				text = pokeString.substring((id+1),id+2);
+			} else if (StringUtils.isNumeric(pokeString.substring((id + 1), id + 2))) {
+				text = pokeString.substring((id + 1), id + 2);
 				return Integer.parseInt(text);
 			}
-			
-			
+
 		}
-		
-		//will return -1 for errors
+
+		// will return -1 for errors
 		return -1;
 	}
-	
-	
-	
+
 	public static int convertType(String type) {
-	
-		String[] typeList = {"normal","fighting","flying","poison","ground","rock","bug","ghost","steel","fire","water","grass","electric","ice","dragon","dark","fairy"};
-		for(int a = 0;a<19;a++) {
-			if(type.equals(typeList[a])) {
-				return a+1;
+
+		String[] typeList = { "normal", "fighting", "flying", "poison", "ground", "rock", "bug", "ghost", "steel",
+				"fire", "water", "grass", "electric", "ice", "dragon", "dark", "fairy" };
+		for (int a = 0; a < 19; a++) {
+			if (type.equals(typeList[a])) {
+				return a + 1;
 			}
 		}
-			
-			return -1;
+
+		return -1;
 	}
-	
+
 	public static double[] getTypeArray(String line) {
-		line = line.substring(line.indexOf("-")+1);
+		line = line.substring(line.indexOf("-") + 1);
 		double[] tempType = new double[18];
-		for(int a = 0;a<18;a++) {
-			
-			if(tempType[a] == 5) {
+		for (int a = 0; a < 18; a++) {
+
+			if (tempType[a] == 5) {
 				tempType[a] = .5;
-			}else {
+			} else {
 				System.out.println("char at" + line.charAt(a));
-			tempType[a] = line.charAt(a);
-			System.out.println("char at" + tempType[a]);
+				tempType[a] = line.charAt(a);
+				System.out.println("char at" + tempType[a]);
 			}
-		  }	
-		
+		}
+
 		return tempType;
 	}
-	public static double[] damageTo(int type1, int type2) {
-		//grabs string from text document pokedex.txt
-				
-				double[] matchup = {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1};
-				String line;
-				String type = "";
-			
-				int count = 0;
-				try (
-						
 
-				 
-					  InputStream fis = new FileInputStream("/Program Files/typing");
-				    InputStreamReader isr = new InputStreamReader(fis, Charset.forName("UTF-8"));
-				    BufferedReader br = new BufferedReader(isr);
-				) {
-				    while ((line = br.readLine()) != null) {
-				    	
-				    	if(count == type1) {
-				    		for(int a = 0;a<18;a++) {
-				    			matchup[a] *= getTypeArray(line)[a];
-				    			System.out.println("typearray" + getTypeArray(line)[a]);
-				    		}
-				    	}else if(count == type2) {
-				    		for(int a = 0;a<18;a++) {
-				    			matchup[a] *= getTypeArray(line)[a];
-				    		}
-				    	}
-				    	count++;
-				    	
-				    }
-				} catch (FileNotFoundException e) {
-					
-					e.printStackTrace();
-				} catch (IOException e) {
-					
-					e.printStackTrace();
+	public static double[] damageTo(int type1, int type2) {
+		// grabs string from text document pokedex.txt
+
+		double[] matchup = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
+		String line;
+		String type = "";
+
+		int count = 0;
+		try (
+
+				InputStream fis = new FileInputStream("/Program Files/typing");
+				InputStreamReader isr = new InputStreamReader(fis, Charset.forName("UTF-8"));
+				BufferedReader br = new BufferedReader(isr);) {
+			while ((line = br.readLine()) != null) {
+
+				if (count == type1) {
+					for (int a = 0; a < 18; a++) {
+						matchup[a] *= getTypeArray(line)[a];
+						System.out.println("typearray" + getTypeArray(line)[a]);
+					}
+				} else if (count == type2) {
+					for (int a = 0; a < 18; a++) {
+						matchup[a] *= getTypeArray(line)[a];
+					}
 				}
-			
-				return matchup;
-			
+				count++;
+
+			}
+		} catch (FileNotFoundException e) {
+
+			e.printStackTrace();
+		} catch (IOException e) {
+
+			e.printStackTrace();
+		}
+
+		return matchup;
+
 	}
-	
+
 	public static void main(String[] args) throws FileNotFoundException, UnsupportedEncodingException {
-	Pokedex dex = new Pokedex();
-//	System.out.println(dex.matchups("machop"));
-	
-	for(int a = 0;a<18;a++) {
-	System.out.println(damageTo(convertType("poison"),convertType("electric"))[a]);
+		Pokedex dex = new Pokedex();
+		// System.out.println(dex.matchups("machop"));
+
+		for (int a = 0; a < 18; a++) {
+			System.out.println(damageTo(convertType("poison"), convertType("electric"))[a]);
+		}
+
+		System.out.println("Done!");
+
 	}
-	
-	System.out.println("Done!");
-	
-	
-	
-	
-	
-	}
-	
-	
 
 }
