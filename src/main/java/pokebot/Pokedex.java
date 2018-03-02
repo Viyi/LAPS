@@ -19,21 +19,23 @@ import me.sargunvohra.lib.pokekotlin.model.PokemonSpecies;
 import me.sargunvohra.lib.pokekotlin.model.Type;
 
 public class Pokedex {
-
+	static String path = "";
 	String pokeString = "";
 
-	Pokedex() {
+	Pokedex(String a) {
+		path = a;
 		// upon creation loads a string that has all pokemon in it
 		pokeString = getPokedex();
 	}
 
+	
 	public String getPokedex() {
 		// grabs string from text document pokedex.txt
 		String line;
 		String full = "";
 		try (
 				//windows
-				 InputStream fis = new FileInputStream("C:\\Program Files\\pokebot\\pokedex.txt");
+				 InputStream fis = new FileInputStream(path + "\\pokedex.txt");
 				//linux
 				//InputStream fis = new FileInputStream("/Program Files/pokedex.txt");
 				InputStreamReader isr = new InputStreamReader(fis, Charset.forName("UTF-8"));
@@ -55,7 +57,7 @@ public class Pokedex {
 
 	}
 
-	public int getId(String name) {
+	public  int getId(String name) {
 		// Takes in a pokemon name, and outputs its id
 		int id = 0;
 		int length = name.length() - 1;
@@ -97,6 +99,7 @@ public class Pokedex {
 
 	public static double[] getTypeArray(String line) {
 		line = line.substring(line.indexOf("-") + 1);
+	
 		double[] tempType = new double[18];
 		for (int a = 0; a < 18; a++) {
 
@@ -113,17 +116,18 @@ public class Pokedex {
 		return tempType;
 	}
 
-	public static double[] damageTo(int type1, int type2) {
+	public static double[] damageTo(String stype1, String stype2) {
 		// grabs string from text document pokedex.txt
-
-		double[] matchup = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
+		int type1 = convertType(stype1);
+		int type2 = convertType(stype2);
+		double[] matchup = { -1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
 		String line;
 		String type = "";
 
 		int count = 0;
 		try (
 				//windows
-				InputStream fis = new FileInputStream("C:\\Program Files\\pokebot\\typing.txt");
+				InputStream fis = new FileInputStream(path +"\\typing.txt");
 				//linux
 				//InputStream fis = new FileInputStream("/Program Files/typing");
 				InputStreamReader isr = new InputStreamReader(fis, Charset.forName("UTF-8"));
@@ -131,15 +135,18 @@ public class Pokedex {
 			while ((line = br.readLine()) != null) {
 
 				if (count == type1) {
-					for (int a = 0; a < 18; a++) {
-						matchup[a] *= getTypeArray(line)[a];
+					for (int a = 1; a < 18; a++) {
+						matchup[a] *= getTypeArray(line)[a-1];
 						
 					}
 				} else if (count == type2) {
-					for (int a = 0; a < 18; a++) {
-						matchup[a] *= getTypeArray(line)[a];
+					System.out.println(count);
+					for (int a = 1; a < 18; a++) {
+						matchup[a] *= getTypeArray(line)[a-1];
+						System.out.println(a + " "+ getTypeArray(line)[a-1]);
 					}
 				}
+				
 				count++;
 
 			}
@@ -154,16 +161,17 @@ public class Pokedex {
 		return matchup;
 
 	}
+		
 
 	public static void main(String[] args) throws FileNotFoundException, UnsupportedEncodingException {
-		Pokedex dex = new Pokedex();
-		// System.out.println(dex.matchups("machop"));
+		Pokedex dex = new Pokedex("C:\\Program Files\\pokebot");
+		 PokeApi pokeApi = new PokeApiClient();
+		
+		
+		System.out.println(damageTo("grass","bug")[10]);
 
-		for (int a = 0; a < 18; a++) {
-			System.out.println(a+ ":" + damageTo(convertType("fighting"), -1)[a]);
-		}
-
-		System.out.println("Done!");
+		
+		System.out.println("done!");
 
 	}
 

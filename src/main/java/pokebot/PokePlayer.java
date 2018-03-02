@@ -107,10 +107,9 @@ public class PokePlayer {
 	public static void main(String[] args) {
 		// loads up gecko driver, and starts firefox
 		// windows
-		// System.setProperty("webdriver.gecko.driver","C:\\Program
-		// Files\\pokebot\\geckodriver.exe");
-		// linux
-		System.setProperty("webdriver.gecko.driver", "/Program Files/geckodriver");
+		 System.setProperty("webdriver.gecko.driver","C:\\Program Files\\pokebot\\geckodriver.exe");
+		//linux
+		//System.setProperty("webdriver.gecko.driver", "/Program Files/geckodriver");
 		WebDriver driver = new FirefoxDriver();
 
 		login(driver);
