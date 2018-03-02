@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+import java.util.Scanner;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -97,66 +98,45 @@ public class Pokedex {
 		return -1;
 	}
 
-	public static double[] getTypeArray(String line) {
-		line = line.substring(line.indexOf("-") + 1);
-	
-		double[] tempType = new double[18];
-		for (int a = 0; a < 18; a++) {
-
-			if (Double.parseDouble(line.substring(a,a+1)) == 5) {
-				tempType[a] = 0.5;
-		
-			} else {
+	public static double convertWeakness(double val) {
+		if(val == 5) {
+			return 0.5;
+		}else {
+			//System.out.println(val);
+			return val;
 			
-				tempType[a] = Double.parseDouble(line.substring(a,a+1));
-				
-			}
 		}
-
-		return tempType;
 	}
-
 	public static double[] damageTo(String stype1, String stype2) {
 		// grabs string from text document pokedex.txt
 		int type1 = convertType(stype1);
 		int type2 = convertType(stype2);
-		double[] matchup = { -1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
+		double[] matchup = { -1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
 		String line;
-		String type = "";
-
-		int count = 0;
+		
 		try (
-				//windows
-				InputStream fis = new FileInputStream(path +"\\typing.txt");
-				//linux
-				//InputStream fis = new FileInputStream("/Program Files/typing");
+				InputStream fis = new FileInputStream(path +"\\typing");
 				InputStreamReader isr = new InputStreamReader(fis, Charset.forName("UTF-8"));
 				BufferedReader br = new BufferedReader(isr);) {
-			while ((line = br.readLine()) != null) {
-
-				if (count == type1) {
-					for (int a = 1; a < 18; a++) {
-						matchup[a] *= getTypeArray(line)[a-1];
-						
-					}
-				} else if (count == type2) {
-					System.out.println(count);
-					for (int a = 1; a < 18; a++) {
-						matchup[a] *= getTypeArray(line)[a-1];
-						System.out.println(a + " "+ getTypeArray(line)[a-1]);
-					}
-				}
+				line = br.readLine();
+			
+			for(int a = 1;a<19;a++) {
+				line = br.readLine();
+				line = line.substring(line.indexOf("-") + 1);
 				
-				count++;
-
+				matchup[a] *= convertWeakness(Double.parseDouble(line.substring(type1-1,type1)));
+				matchup[a] *= convertWeakness(Double.parseDouble(line.substring(type2-1,type2)));
+				//System.out.println(matchup[a]);
 			}
-		} catch (FileNotFoundException e) {
-
-			e.printStackTrace();
-		} catch (IOException e) {
-
-			e.printStackTrace();
 		}
+			 catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		
 
 		return matchup;
 
@@ -168,8 +148,8 @@ public class Pokedex {
 		 PokeApi pokeApi = new PokeApiClient();
 		
 		
-		System.out.println(damageTo("grass","bug")[10]);
-
+		System.out.println(damageTo("grass","fairy")[convertType("dragon")]);
+		
 		
 		System.out.println("done!");
 
