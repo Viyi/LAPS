@@ -36,7 +36,7 @@ public class Pokedex {
 		String full = "";
 		try (
 				//windows
-				 InputStream fis = new FileInputStream(path + "\\pokedex.txt");
+				 InputStream fis = new FileInputStream("pokedex.txt");
 				//linux
 				//InputStream fis = new FileInputStream("/Program Files/pokedex.txt");
 				InputStreamReader isr = new InputStreamReader(fis, Charset.forName("UTF-8"));
@@ -115,7 +115,7 @@ public class Pokedex {
 		String line;
 		
 		try (
-				InputStream fis = new FileInputStream(path +"\\typing");
+				InputStream fis = new FileInputStream("typing");
 				InputStreamReader isr = new InputStreamReader(fis, Charset.forName("UTF-8"));
 				BufferedReader br = new BufferedReader(isr);) {
 				line = br.readLine();
@@ -144,11 +144,13 @@ public class Pokedex {
 		
 
 	public static void main(String[] args) throws FileNotFoundException, UnsupportedEncodingException {
-		Pokedex dex = new Pokedex("C:\\Program Files\\pokebot");
+		Pokedex dex = new Pokedex("");
 		 PokeApi pokeApi = new PokeApiClient();
 		
+		 
+		 System.out.println(bulbasaur);
 		
-		System.out.println(damageTo("grass","fairy")[convertType("dragon")]);
+	//	System.out.println(damageTo("grass","fairy")[convertType("dragon")]);
 		
 		
 		System.out.println("done!");
