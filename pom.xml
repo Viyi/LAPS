@@ -23,6 +23,12 @@
     <artifactId>commons-lang3</artifactId>
     <version>3.7</version>
 </dependency>
+  <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
+<dependency>
+    <groupId>com.google.guava</groupId>
+    <artifactId>guava</artifactId>
+    <version>24.0-jre</version>
+</dependency>
   
   	<!-- https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java -->
 <dependency>
@@ -42,12 +48,7 @@
     <artifactId>selenium-firefox-driver</artifactId>
     <version>3.9.1</version>
 </dependency>
-<!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
-<dependency>
-    <groupId>com.google.guava</groupId>
-    <artifactId>guava</artifactId>
-    <version>24.0-jre</version>
-</dependency>
+
 
   </dependencies>
 </project>

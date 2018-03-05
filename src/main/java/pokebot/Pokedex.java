@@ -20,31 +20,50 @@ import me.sargunvohra.lib.pokekotlin.model.PokemonSpecies;
 import me.sargunvohra.lib.pokekotlin.model.Type;
 
 public class Pokedex {
-	static String path = "";
-	String pokeString = "";
-
+	//Path to data files
+	private String path = "";
+	//String Array with all types. Normal is the 1st type not 0, so all methods add one when returning from array.
+	private String[] typeList = { "normal", "fighting", "flying", "poison", "ground", "rock", "bug", "ghost", "steel",
+			"fire", "water", "grass", "electric", "psychic", "ice", "dragon", "dark", "fairy" };
 	Pokedex(String a) {
+		//upon initialization sets path for data files
 		path = a;
-		// upon creation loads a string that has all pokemon in it
-		pokeString = getPokedex();
 	}
 
 	
-	public String getPokedex() {
-		// grabs string from text document pokedex.txt
+	
+	public int[] getType(String name) {
+		//This method is super effective!
+		//get type gets the type of whatever pokemon you input.
 		String line;
-		String full = "";
+		//TypeCount counts how many types the pokemon has
+		int typeCount = 0;
+		//The array to be returned after method completes
+		int[] types = new int[2];
 		try (
-				//windows
-				 InputStream fis = new FileInputStream("pokedex.txt");
-				//linux
-				//InputStream fis = new FileInputStream("/Program Files/pokedex.txt");
+
+				// windows
+				// InputStream fis = new FileInputStream("C:\\Program Files\\pokebot\\login.txt");
+				// linux
+				//#TODO take out all ability names in pokerepo, it messes up scanning (steelix) 
+				InputStream fis = new FileInputStream(path + "/pokerepo");
+				//Reads the file, and looks for pokemon names in lower case.
+				//Then finds types based on the typeCount array
+				//Then adds type id number to the types array to be returned
 				InputStreamReader isr = new InputStreamReader(fis, Charset.forName("UTF-8"));
 				BufferedReader br = new BufferedReader(isr);) {
 			while ((line = br.readLine()) != null) {
-				// places each line of pokedex.txt in string
-				full += line;
-
+				if(line.toLowerCase().contains(name)) {
+					for(int a = 0;a<18;a++) {
+						if(line.toLowerCase().contains(typeList[a])) {
+							types[typeCount] = a + 1;
+							typeCount++;
+							if(typeCount > 1) {
+								return types;
+							}
+						}
+					}
+				}
 			}
 		} catch (FileNotFoundException e) {
 
@@ -53,104 +72,27 @@ public class Pokedex {
 
 			e.printStackTrace();
 		}
-		// Returns full pokemon roster to be taken into pokeString
-		return full;
-
-	}
-
-	public  int getId(String name) {
-		// Takes in a pokemon name, and outputs its id
-		int id = 0;
-		int length = name.length() - 1;
-		String text = "";
-		// checks if valid pokemon
-		if (pokeString.contains("pokemonSpecies=NamedApiResource(name=" + name)) {
-			// finds the index of the pokemon
-			id = pokeString.indexOf("pokemonSpecies=NamedApiResource(name=" + name) + 68 + length;
-			// checks if text gotten is a string, if so it returns
-			if (StringUtils.isNumeric(pokeString.substring((id + 1), id + 4))) {
-				text = pokeString.substring((id + 1), id + 4);
-				return Integer.parseInt(text);
-			} else if (StringUtils.isNumeric(pokeString.substring((id + 1), id + 3))) {
-				text = pokeString.substring((id + 1), id + 3);
-				return Integer.parseInt(text);
-			} else if (StringUtils.isNumeric(pokeString.substring((id + 1), id + 2))) {
-				text = pokeString.substring((id + 1), id + 2);
-				return Integer.parseInt(text);
-			}
-
-		}
-
-		// will return -1 for errors
-		return -1;
-	}
-
-	public static int convertType(String type) {
-
-		String[] typeList = { "normal", "fighting", "flying", "poison", "ground", "rock", "bug", "ghost", "steel",
-				"fire", "water", "grass", "electric", "ice", "dragon", "dark", "fairy" };
-		for (int a = 0; a < 19; a++) {
-			if (type.equals(typeList[a])) {
-				return a + 1;
-			}
-		}
-
-		return -1;
-	}
-
-	public static double convertWeakness(double val) {
-		if(val == 5) {
-			return 0.5;
-		}else {
-			//System.out.println(val);
-			return val;
-			
-		}
-	}
-	public static double[] damageTo(String stype1, String stype2) {
-		// grabs string from text document pokedex.txt
-		int type1 = convertType(stype1);
-		int type2 = convertType(stype2);
-		double[] matchup = { -1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
-		String line;
 		
-		try (
-				InputStream fis = new FileInputStream("typing");
-				InputStreamReader isr = new InputStreamReader(fis, Charset.forName("UTF-8"));
-				BufferedReader br = new BufferedReader(isr);) {
-				line = br.readLine();
-			
-			for(int a = 1;a<19;a++) {
-				line = br.readLine();
-				line = line.substring(line.indexOf("-") + 1);
-				
-				matchup[a] *= convertWeakness(Double.parseDouble(line.substring(type1-1,type1)));
-				matchup[a] *= convertWeakness(Double.parseDouble(line.substring(type2-1,type2)));
-				//System.out.println(matchup[a]);
-			}
-		}
-			 catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		
+		
+		return types;
+	}
+	
+
+	
+
+	
+	
 		
 
-		return matchup;
-
-	}
-		
-
-	public static void main(String[] args) throws FileNotFoundException, UnsupportedEncodingException {
-		Pokedex dex = new Pokedex("");
-		 PokeApi pokeApi = new PokeApiClient();
-		
-		 
-		 System.out.println(bulbasaur);
-		
-	//	System.out.println(damageTo("grass","fairy")[convertType("dragon")]);
+	public static void main(String[] args)  {
+		//The objective of this class is to determine weaknesses, and move types
+		//Unlike pokeplayer everything here will not be static
+		//Instantiate dex, and give path
+		Pokedex dex = new Pokedex("/home/viyi/Documents/pokebot");
+		String name = "rayquaza";
+		System.out.println(dex.getType(name)[0]);
+		System.out.println(dex.getType(name)[1]);
 		
 		
 		System.out.println("done!");

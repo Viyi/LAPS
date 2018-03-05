@@ -28,10 +28,14 @@ import me.sargunvohra.lib.pokekotlin.model.PokemonSpecies;
 import me.sargunvohra.lib.pokekotlin.model.PokemonSpeciesDexEntry;
 
 public class PokePlayer {
+	public static String path = "";
 	public static int waitTime = 3;
 
 	public PokePlayer() {
 
+	}
+	public static void setPath(String s) {
+		path = s;
 	}
 
 	public static String getInfo() {
@@ -43,9 +47,9 @@ public class PokePlayer {
 		try (
 
 				// windows
-				 InputStream fis = new FileInputStream("C:\\Program Files\\pokebot\\login.txt");
+				// InputStream fis = new FileInputStream("C:\\Program Files\\pokebot\\login.txt");
 				// linux
-				//InputStream fis = new FileInputStream("/Program Files/login");
+				InputStream fis = new FileInputStream(path + "/login");
 
 				InputStreamReader isr = new InputStreamReader(fis, Charset.forName("UTF-8"));
 				BufferedReader br = new BufferedReader(isr);) {
@@ -104,11 +108,12 @@ public class PokePlayer {
 	}
 
 	public static void main(String[] args) {
+		setPath("/home/viyi/Documents/pokebot");
 		// loads up gecko driver, and starts firefox
 		// windows
-		 System.setProperty("webdriver.gecko.driver","C:\\Program Files\\pokebot\\geckodriver.exe");
+		// System.setProperty("webdriver.gecko.driver","C:\\Program Files\\pokebot\\geckodriver.exe");
 		//linux
-		//System.setProperty("webdriver.gecko.driver", "/Program Files/geckodriver");
+		System.setProperty("webdriver.gecko.driver", path + "/geckodriver");
 		WebDriver driver = new FirefoxDriver();
 
 		login(driver);
