@@ -30,7 +30,14 @@ public class Pokedex {
 		path = a;
 	}
 
-	
+	public String parseMove(String s) {
+		for(int a = 0;a<18;a++) {
+		if(s.toLowerCase().contains(typeList[a])) {
+			return typeList[a];
+		}
+	}
+		return "none?";
+	}
 	
 	public int[] getType(String name) {
 		//This method is super effective!
@@ -53,7 +60,7 @@ public class Pokedex {
 				InputStreamReader isr = new InputStreamReader(fis, Charset.forName("UTF-8"));
 				BufferedReader br = new BufferedReader(isr);) {
 			while ((line = br.readLine()) != null) {
-				if(line.toLowerCase().contains(name)) {
+				if(line.toLowerCase().contains(name.toLowerCase())) {
 					for(int a = 0;a<18;a++) {
 						if(line.toLowerCase().contains(typeList[a])) {
 							types[typeCount] = a + 1;
@@ -78,7 +85,194 @@ public class Pokedex {
 		return types;
 	}
 	
+	public int[] weaknessCalculator(String name) {
+		//This method gets all the weaknesses of a pokemon
+				String line;
+				int[] types = getType(name);
+			
+				int count = 1;
+				
+				int[] weaknesses = new int[18];
+				try (
 
+						// windows
+						// InputStream fis = new FileInputStream("C:\\Program Files\\pokebot\\login.txt");
+						// linux
+						
+						InputStream fis = new FileInputStream(path + "/weakness");
+						//Reads the file, and looks for weaknesses
+						InputStreamReader isr = new InputStreamReader(fis, Charset.forName("UTF-8"));
+						BufferedReader br = new BufferedReader(isr);) {
+					while ((line = br.readLine()) != null) {
+						if(count == types[0] || count == types[1]) {
+							for(int a = 0;a<18;a++) {
+							
+								if(line.contains(typeList[a])){
+							
+									weaknesses[a] += 1;
+								}
+							}
+						}
+						count++;
+								
+						
+						
+					}
+				} catch (FileNotFoundException e) {
+
+					e.printStackTrace();
+				} catch (IOException e) {
+
+					e.printStackTrace();
+				}
+				
+				return weaknesses;
+		
+	}
+	
+	public int[] resistanceCalculator(String name) {
+		//This method gets all the resistances of a pokemon
+		String line;
+		int[] types = getType(name);
+	
+		int count = 1;
+		
+		int[] weaknesses = new int[18];
+		try (
+
+				// windows
+				// InputStream fis = new FileInputStream("C:\\Program Files\\pokebot\\login.txt");
+				// linux
+				
+				InputStream fis = new FileInputStream(path + "/resistance");
+				//Reads the file, and looks for weaknesses
+				InputStreamReader isr = new InputStreamReader(fis, Charset.forName("UTF-8"));
+				BufferedReader br = new BufferedReader(isr);) {
+			while ((line = br.readLine()) != null) {
+				if(count == types[0] || count == types[1]) {
+					for(int a = 0;a<18;a++) {
+					
+						if(line.contains(typeList[a])){
+					
+							weaknesses[a] -= 1;
+						}
+					}
+				}
+				count++;
+						
+				
+				
+			}
+		} catch (FileNotFoundException e) {
+
+			e.printStackTrace();
+		} catch (IOException e) {
+
+			e.printStackTrace();
+		}
+		
+		return weaknesses;
+
+}
+	public int[] fullCalc(String name) {
+		//This method combines all weaknesses, and resistances with immunities to create a perfect index
+		//Types are ranked as ints moves greater than 0 will be super effective, moves equal to 0 will be neutral
+		//moves less than 0 wont be effective, and moves less than -5 won't hit at all
+		String line;
+		int[] types = getType(name);
+		int[] resistances = resistanceCalculator(name);
+		int[] weaknesses = weaknessCalculator(name);
+		int count = 1;
+		
+		int[] fullArray = new int[18];
+		try (
+
+				// windows
+				// InputStream fis = new FileInputStream("C:\\Program Files\\pokebot\\login.txt");
+				// linux
+				
+				InputStream fis = new FileInputStream(path + "/immunities");
+				//Reads the file, and looks for weaknesses
+				InputStreamReader isr = new InputStreamReader(fis, Charset.forName("UTF-8"));
+				BufferedReader br = new BufferedReader(isr);) {
+			while ((line = br.readLine()) != null) {
+				if(count == types[0] || count == types[1]) {
+					for(int a = 0;a<18;a++) {
+					
+						if(line.contains(typeList[a])){
+					
+							fullArray[a] -= 10;
+						}
+					}
+				}
+				count++;
+						
+				
+				
+			}
+		} catch (FileNotFoundException e) {
+
+			e.printStackTrace();
+		} catch (IOException e) {
+
+			e.printStackTrace();
+		}
+		
+		
+		for(int a = 0;a<18;a++) {
+			fullArray[a] += resistances[a] + weaknesses[a];
+		}
+		
+		return fullArray;
+
+}
+	
+	
+	public int moveType(String move) {
+		//returns move typing by using a file
+		//currently obsolete, because parseMove, see parseMove at top of class
+		String line;
+		
+		int type = -1;
+		int count = 1;
+		
+		int[] weaknesses = new int[18];
+		try (
+
+				// windows
+				// InputStream fis = new FileInputStream("C:\\Program Files\\pokebot\\login.txt");
+				// linux
+				
+				InputStream fis = new FileInputStream(path + "/moves");
+				//Reads the file, and looks for weaknesses
+				InputStreamReader isr = new InputStreamReader(fis, Charset.forName("UTF-8"));
+				BufferedReader br = new BufferedReader(isr);) {
+			while ((line = br.readLine()) != null) {
+				if(line.toLowerCase().contains(move.toLowerCase())) {
+					for(int a = 0;a<18;a++) {
+						if(line.toLowerCase().contains(typeList[a])){
+					
+							type = a + 1;
+						}
+					}
+				}
+				count++;
+						
+				
+				
+			}
+		} catch (FileNotFoundException e) {
+
+			e.printStackTrace();
+		} catch (IOException e) {
+
+			e.printStackTrace();
+		}
+		
+		return type;
+		
+		
+	}
 	
 
 	
@@ -90,10 +284,14 @@ public class Pokedex {
 		//Unlike pokeplayer everything here will not be static
 		//Instantiate dex, and give path
 		Pokedex dex = new Pokedex("/home/viyi/Documents/pokebot");
-		String name = "rayquaza";
-		System.out.println(dex.getType(name)[0]);
-		System.out.println(dex.getType(name)[1]);
 		
+		/*
+		for(int a = 0;a<18;a++) {
+			System.out.println(dex.fullCalc("geodude")[a]);
+		}
+		*/
+		
+		System.out.println(dex.moveType(""));
 		
 		System.out.println("done!");
 
