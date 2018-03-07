@@ -66,6 +66,9 @@ public class Pokedex {
 							types[typeCount] = a + 1;
 							typeCount++;
 							if(typeCount > 1) {
+								if(types[1] == types[0]) {
+									types[1] = 0;
+								}
 								return types;
 							}
 						}
@@ -80,8 +83,11 @@ public class Pokedex {
 			e.printStackTrace();
 		}
 		
-		
-		
+		System.out.println(types[1]);
+		if(types[1] == types[0]) {
+			types[1] = 0;
+			
+		}
 		return types;
 	}
 	
@@ -274,6 +280,33 @@ public class Pokedex {
 		
 	}
 	
+	public int matchupCompare(String attacker,String defender) {
+
+		if(getType(attacker)[1] == 0) {
+			if(fullCalc(defender)[getType(attacker)[0]-1] < 0) {
+				return -1;
+			}else if(fullCalc(defender)[getType(attacker)[0]-1] > 0){
+				return 1;
+			}else {
+				return 0;
+			}
+		}
+		
+		if(fullCalc(defender)[getType(attacker)[0]-1] < 0 && fullCalc(defender)[getType(attacker)[1]-1] < 0) {
+			return -2;
+		}else if(fullCalc(defender)[getType(attacker)[0]-1] < 0 || fullCalc(defender)[getType(attacker)[1]-1] < 0 ) {
+			return -1;
+		}else if(fullCalc(defender)[getType(attacker)[0]-1] > 0 && fullCalc(defender)[getType(attacker)[1]-1] > 0) {
+			return 2;
+		}else if(fullCalc(defender)[getType(attacker)[0]-1] > 0 || fullCalc(defender)[getType(attacker)[1]-1] > 0) {
+			return 1;
+		}else {
+			return 0;
+		}
+		 
+		
+		
+	}
 
 	
 	
@@ -285,13 +318,10 @@ public class Pokedex {
 		//Instantiate dex, and give path
 		Pokedex dex = new Pokedex("/home/viyi/Documents/pokebot");
 		
-		/*
-		for(int a = 0;a<18;a++) {
-			System.out.println(dex.fullCalc("geodude")[a]);
-		}
-		*/
+		System.out.println(dex.getType("Gyarados")[1]);
+		System.out.println(dex.matchupCompare("machop","absol"));
 		
-		System.out.println(dex.moveType(""));
+		
 		
 		System.out.println("done!");
 
