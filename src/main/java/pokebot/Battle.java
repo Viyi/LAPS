@@ -3,7 +3,7 @@ package pokebot;
 public class Battle {
 	private String opponent = "";
 	private int playStyle = 1;
-	private String[] myTeam = new String[6];
+	private String[] myTeam = new String[7];
 	private String[] moves = new String[4];
 	public Battle(int style,String[] team) {
 		playStyle = style;
@@ -19,7 +19,7 @@ public class Battle {
 		playStyle = style;
 		}
 	public void setOpponent(String opp) {
-		opponent = opp.toLowerCase().substring(0,opp.indexOf(" "));
+		opponent = myTeam[0];
 	}
 	
 	public String getOpponent() {

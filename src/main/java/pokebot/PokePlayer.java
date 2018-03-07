@@ -113,13 +113,16 @@ public class PokePlayer {
 	
 	public static String[] teamArray(WebDriver driver) {
 		//creates an array of pokemon names from your team
-		String[] team = new String[6];
-		int solid = 2;
-		team[0] = find(driver,By.xpath("/html/body/div[4]/div[5]/div/div[3]/div[2]/button[1]"));
-		for(int a = 1;a<6;a++) {
-			team[a] = find(driver,By.cssSelector(".switchmenu > button:nth-child("+solid+")"));
+		String[] team = new String[7];
+		
+		team[0] = find(driver,By.xpath("/html/body/div[4]/div[1]/div/div[5]/div[2]/strong"));
+		team[0] = team[0].substring(0, team[0].indexOf("L")-1);
+		team[1] = find(driver,By.xpath("/html/body/div[4]/div[1]/div/div[5]/div[1]/strong"));
+		team[1] = team[1].substring(0, team[1].indexOf("L")-1);
+		for(int a = 2;a<7;a++) {
+			team[a] = find(driver,By.cssSelector(".switchmenu > button:nth-child("+a+")"));
 			System.out.println(team[a]);
-			solid ++;
+			
 			
 		}
 		System.out.println(Arrays.toString(team));
