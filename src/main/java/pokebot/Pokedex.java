@@ -304,7 +304,7 @@ public class Pokedex {
 			return 0;
 		}
 		 
-		
+		//The highertthe number the better the matchup is for an attacker, the lower the worse.
 		
 	}
 
