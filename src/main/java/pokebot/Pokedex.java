@@ -30,13 +30,13 @@ public class Pokedex {
 		path = a;
 	}
 
-	public String parseMove(String s) {
+	public int parseMove(String s) {
 		for(int a = 0;a<18;a++) {
 		if(s.toLowerCase().contains(typeList[a])) {
-			return typeList[a];
+			return a + 1;
 		}
 	}
-		return "none?";
+		return -1;
 	}
 	
 	public int[] getType(String name) {
@@ -69,6 +69,7 @@ public class Pokedex {
 								if(types[1] == types[0]) {
 									types[1] = 0;
 								}
+							
 								return types;
 							}
 						}

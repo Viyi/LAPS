@@ -108,7 +108,7 @@ public class PokePlayer {
 		click(driver, By.cssSelector(".buttonbar > button:nth-child(1)"));
 		type(driver, By.cssSelector(".textbox"), password);
 		click(driver, By.cssSelector(".buttonbar > button:nth-child(1)"));
-		//click(driver, By.cssSelector(".autofocus"));
+		click(driver, By.cssSelector(".autofocus"));
 	}
 	
 	public static void mute(WebDriver driver) {
@@ -144,10 +144,10 @@ public class PokePlayer {
 		}
 	}
 
-	public static String[] setMoves(WebDriver driver) {
+	public static int[] setMoves(WebDriver driver) {
 		//This method looks at pokemons moves, and makes an array of all the types!
 		Pokedex dex = new Pokedex(path);
-		String[] moves = new String[4];
+		int[] moves = new int[4];
 		//Parse move is very simple, and should be improved in the future
 		moves[0] = dex.parseMove(find(driver, By.xpath("/html/body/div[4]/div[5]/div/div[2]/div[2]/button[1]")));
 		moves[1] = dex.parseMove(find(driver, By.xpath("/html/body/div[4]/div[5]/div/div[2]/div[2]/button[2]")));
@@ -165,11 +165,23 @@ public class PokePlayer {
 		Battle battle = new Battle(1,teamArray(driver));
 		battle.setMoves(setMoves(driver));
 		
-	
+		while(true) {
+			System.out.println("opp test time!");
+			int change = battle.oppTest(path);
+			battle.setTeam(teamArray(driver));
+			if(change != 0) {
+				click(driver,By.cssSelector(".switchmenu > button:nth-child("+change+")"));
+			}else {
+				click(driver, By.xpath("/html/body/div[4]/div[5]/div/div[2]/div[2]/button[" +battle.smartAttack(path) +"]"));
+			}
+			
+		}
+		
+		
 	}
 
 	public static void main(String[] args) {
-		setPath("/home/teajay/Documents/pokebot");
+		setPath("/home/viyi/Documents/pokebot");
 		// loads up gecko driver, and starts firefox
 		// windows
 		// System.setProperty("webdriver.gecko.driver","C:\\Program Files\\pokebot\\geckodriver.exe");
@@ -179,7 +191,9 @@ public class PokePlayer {
 		
 		login(driver);
 		mute(driver);
+		
 		battle(driver);
+
 		
 
 		System.out.println("done!");

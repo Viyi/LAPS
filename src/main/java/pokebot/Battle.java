@@ -3,9 +3,9 @@ package pokebot;
 public class Battle {
 	private int playStyle = 1;
 	private String[] myTeam = new String[7];
-	private String currentPoke = myTeam[1];
-	private String opponent = myTeam[0];
-	private String[] moves = new String[4];
+	private String currentPoke = "";
+	private String opponent = "";
+	private int[] moves = new int[4];
 	public Battle(int style,String[] team) {
 		playStyle = style;
 		myTeam = team;
@@ -13,21 +13,17 @@ public class Battle {
 	
 	public void setTeam(String[] team) {
 		myTeam = team;
+		opponent = myTeam[0];
+		currentPoke = myTeam[1];
+		
 	}
 	
 	public void setStyle(int style) {
 		//1: offensive, 2:defensive, 3:random
 		playStyle = style;
 		}
-	public void setOpponent(String opp) {
-		opponent = myTeam[0];
-	}
 	
-	public String getOpponent() {
-		return opponent;
-	}
-	
-	public void setMoves(String[] m) {
+	public void setMoves(int[] m) {
 		moves = m;
 	}
 	
@@ -42,31 +38,62 @@ public class Battle {
 		int bestMatchUp = 1;
 		for(int pos = 1; pos<8; pos++) {
 			if(reference.matchupCompare(opponent, myTeam[pos])< reference.matchupCompare(opponent, myTeam[bestMatchUp])){
+				System.out.println("Working" + bestMatchUp);
 				bestMatchUp=pos;
 			}
 		}
 		//returns 0(keeps currentPoke) if there isn't a better option
-		if(bestMatchUp==1) {bestMatchUp=0;}
+		//if(bestMatchUp==1) {bestMatchUp=0;}
 		return bestMatchUp;
 	}
 	
-	public int smartSwitch() {
-		//chooses good pokemon to switch into opponent
-		
-		return -1;
-	}
-	
-	public int smartAttack() {
+	public int smartAttack(String path) {
 		//chooses effective attack
-		return -1;
+		Pokedex dex = new Pokedex(path);
+		int[] weak = dex.fullCalc(myTeam[0]);
+		for(int a = 0;a<18;a++) {
+			for(int b = 0;b<4;b++) {
+				if(weak[a] > 1 && a == moves[b]+1) {
+					return b +1;
+				}
+			}
+		
+		}
+		for(int a = 0;a<18;a++) {
+			for(int b = 0;b<4;b++) {
+				if(weak[a] > 0 && a == moves[b]+1) {
+					return b +1;
+				}
+			}
+		}
+			for(int a = 0;a<18;a++) {
+				for(int b = 0;b<4;b++) {
+					if(weak[a] > -1 && a == moves[b]+1) {
+							return b + 1;
+					}
+				}
+			}
+			for(int a = 0;a<18;a++) {
+				for(int b = 0;b<4;b++) {
+					if(weak[a] > -2 && a == moves[b]+1) {
+						return b + 1;
+					}
+				}
+			}
+			
+			return 2;
 	}
-	
-	
-	
-	
-	
-	
 	
 }
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
 
 
