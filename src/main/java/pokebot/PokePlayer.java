@@ -108,7 +108,13 @@ public class PokePlayer {
 		click(driver, By.cssSelector(".buttonbar > button:nth-child(1)"));
 		type(driver, By.cssSelector(".textbox"), password);
 		click(driver, By.cssSelector(".buttonbar > button:nth-child(1)"));
-		click(driver, By.cssSelector(".autofocus"));
+		//click(driver, By.cssSelector(".autofocus"));
+	}
+	
+	public static void mute(WebDriver driver) {
+		//mutes the game, I'm so helpful
+		click(driver, By.cssSelector("button.icon:nth-child(2)"));
+		click(driver, By.cssSelector(".ps-popup > p:nth-child(4) > label:nth-child(1) > input:nth-child(1)"));
 	}
 	
 	public static String[] teamArray(WebDriver driver) {
@@ -163,7 +169,7 @@ public class PokePlayer {
 	}
 
 	public static void main(String[] args) {
-		setPath("/home/viyi/Documents/pokebot");
+		setPath("/home/teajay/Documents/pokebot");
 		// loads up gecko driver, and starts firefox
 		// windows
 		// System.setProperty("webdriver.gecko.driver","C:\\Program Files\\pokebot\\geckodriver.exe");
@@ -172,7 +178,9 @@ public class PokePlayer {
 		WebDriver driver = new FirefoxDriver();
 		
 		login(driver);
+		mute(driver);
 		battle(driver);
+		
 
 		System.out.println("done!");
 
