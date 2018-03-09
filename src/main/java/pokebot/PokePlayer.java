@@ -14,8 +14,6 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-
-
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -36,6 +34,7 @@ public class PokePlayer {
 	public PokePlayer() {
 
 	}
+
 	public static void setPath(String s) {
 		path = s;
 	}
@@ -49,7 +48,8 @@ public class PokePlayer {
 		try (
 
 				// windows
-				// InputStream fis = new FileInputStream("C:\\Program Files\\pokebot\\login.txt");
+				// InputStream fis = new FileInputStream("C:\\Program
+				// Files\\pokebot\\login.txt");
 				// linux
 				InputStream fis = new FileInputStream(path + "/login");
 
@@ -77,7 +77,7 @@ public class PokePlayer {
 		wait.until(ExpectedConditions.elementToBeClickable(selector));
 		driver.findElement(selector).click();
 	}
-	
+
 	public static String find(WebDriver driver, By selector) {
 		WebDriverWait wait = new WebDriverWait(driver, waitTime);
 		wait.until(ExpectedConditions.presenceOfElementLocated((selector)));
@@ -110,23 +110,31 @@ public class PokePlayer {
 		click(driver, By.cssSelector(".buttonbar > button:nth-child(1)"));
 		click(driver, By.cssSelector(".autofocus"));
 	}
-	
+
 	public static void mute(WebDriver driver) {
-		//mutes the game, I'm so helpful
+		// mutes the game, I'm so helpful
 		click(driver, By.cssSelector("button.icon:nth-child(2)"));
 		click(driver, By.cssSelector(".ps-popup > p:nth-child(4) > label:nth-child(1) > input:nth-child(1)"));
 	}
-	
+
 	public static String[] teamArray(WebDriver driver) {
 		//creates an array of pokemon names from your team
 		String[] team = new String[7];
 		
-		team[0] = find(driver,By.xpath("/html/body/div[4]/div[1]/div/div[5]/div[2]/strong"));
+		if(find(driver,By.xpath("/html/body/div[4]/div[1]/div/div[5]/div[1]/strong")).equals("") == false) {
+			team[0] = find(driver,By.xpath("/html/body/div[4]/div[1]/div/div[5]/div[1]/strong"));
+		}else {
+			team[0] = find(driver,By.xpath("/html/body/div[4]/div[1]/div/div[5]/div[2]/strong"));
+		}
+		
+		System.out.println("Loading Enemy " + team[0]);
 		team[0] = team[0].substring(0, team[0].indexOf("L")-1);
 		team[1] = find(driver,By.xpath("/html/body/div[4]/div[1]/div/div[5]/div[1]/strong"));
+		System.out.println("Loading First " + team[1]);
 		team[1] = team[1].substring(0, team[1].indexOf("L")-1);
 		for(int a = 2;a<7;a++) {
 			team[a] = find(driver,By.cssSelector(".switchmenu > button:nth-child("+a+")"));
+			System.out.println("Loading Pokemon "+ a + team[a]);
 			System.out.println(team[a]);
 			
 			
@@ -134,21 +142,22 @@ public class PokePlayer {
 		System.out.println(Arrays.toString(team));
 		return team;
 	}
-	
+
 	public static boolean battleOver(WebDriver driver) {
-		//the idea here is to see if the battle is over, not working yet
-		if(ExpectedConditions.elementToBeClickable(By.cssSelector(".controls > p:nth-child(2) > button:nth-child(1)")) !=null) {
+		// the idea here is to see if the battle is over, not working yet
+		if (ExpectedConditions
+				.elementToBeClickable(By.cssSelector(".controls > p:nth-child(2) > button:nth-child(1)")) != null) {
 			return true;
-		}else {
+		} else {
 			return false;
 		}
 	}
 
 	public static int[] setMoves(WebDriver driver) {
-		//This method looks at pokemons moves, and makes an array of all the types!
+		// This method looks at pokemons moves, and makes an array of all the types!
 		Pokedex dex = new Pokedex(path);
 		int[] moves = new int[4];
-		//Parse move is very simple, and should be improved in the future
+		// Parse move is very simple, and should be improved in the future
 		moves[0] = dex.parseMove(find(driver, By.xpath("/html/body/div[4]/div[5]/div/div[2]/div[2]/button[1]")));
 		moves[1] = dex.parseMove(find(driver, By.xpath("/html/body/div[4]/div[5]/div/div[2]/div[2]/button[2]")));
 		moves[2] = dex.parseMove(find(driver, By.xpath("/html/body/div[4]/div[5]/div/div[2]/div[2]/button[3]")));
@@ -156,45 +165,46 @@ public class PokePlayer {
 		System.out.println(Arrays.toString(moves));
 		return moves;
 	}
-	
+
 	public static void battle(WebDriver driver) {
-		//Sets timer
+		// Sets timer
 		click(driver, By.cssSelector(".timerbutton"));
 		click(driver, By.cssSelector(".ps-popup > p:nth-child(1) > button:nth-child(1)"));
-		//Waits to Start Battle 
-		Battle battle = new Battle(1,teamArray(driver));
+		// Waits to Start Battle
+		System.out.println("Instantiate Battle");
+		Battle battle = new Battle(1, teamArray(driver));
+		System.out.println("Set Moves");
 		battle.setMoves(setMoves(driver));
-		
-		while(true) {
+
+		while (true) {
 			System.out.println("opp test time!");
-			int change = battle.oppTest(path);
 			battle.setTeam(teamArray(driver));
-			if(change != 0) {
-				click(driver,By.cssSelector(".switchmenu > button:nth-child("+change+")"));
-			}else {
-				click(driver, By.xpath("/html/body/div[4]/div[5]/div/div[2]/div[2]/button[" +battle.smartAttack(path) +"]"));
+			int change = battle.oppTest(path);
+			if (change != 0) {
+				click(driver, By.cssSelector(".switchmenu > button:nth-child(" + change + ")"));
+			} else {
+				click(driver, By
+						.xpath("/html/body/div[4]/div[5]/div/div[2]/div[2]/button[" + battle.smartAttack(path) + "]"));
 			}
-			
+
 		}
-		
-		
+
 	}
 
 	public static void main(String[] args) {
 		setPath("/home/viyi/Documents/pokebot");
 		// loads up gecko driver, and starts firefox
 		// windows
-		// System.setProperty("webdriver.gecko.driver","C:\\Program Files\\pokebot\\geckodriver.exe");
-		//linux
+		// System.setProperty("webdriver.gecko.driver","C:\\Program
+		// Files\\pokebot\\geckodriver.exe");
+		// linux
 		System.setProperty("webdriver.gecko.driver", path + "/geckodriver");
 		WebDriver driver = new FirefoxDriver();
-		
+
 		login(driver);
 		mute(driver);
-		
-		battle(driver);
 
-		
+		battle(driver);
 
 		System.out.println("done!");
 
