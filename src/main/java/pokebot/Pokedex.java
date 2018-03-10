@@ -309,7 +309,32 @@ public class Pokedex {
 
 			e.printStackTrace();
 		}
-
+		System.out.println(types[0]);
+		String[] specialMoves = {"Roost","Slack Off","Synthesis","Recover","Softboiled","Moonlight","Milk Drink","Morning Sun","Heal Order"};
+		for(int a = 0;a < 4;a++) {
+			if(types[a].equals("baton pass")) {
+				moves[1][a] = -2; 
+			}else {
+				for(int b = 0;b<specialMoves.length;b++) {
+					if(types[a].equals(specialMoves[b].toLowerCase())) {
+						moves[1][a] = 2;
+					}
+				}
+				String[] pecialMoves = {"Swords Dance","Work Up","Shift Gear","Nasty Plot","Quiver Dance","Calm Mind","Hone Claws","Dragon Dance","Bulk Up"};
+				for(int b = 0;b<pecialMoves.length;b++) {
+					if(types[a].equals(pecialMoves[b].toLowerCase())) {
+						moves[1][a] = -1;
+					}
+				}
+				String[] sspecialMoves = {"Baneful Bunker","Crafty Shield","Detect","King's Shield","Mat Block","Spiky Shield"};
+				for(int b = 0;b<specialMoves.length;b++) {
+					if(types[a].equals(specialMoves[b].toLowerCase())) {
+						moves[1][a] = 3;
+					}
+				}
+				
+			}
+		}
 		return moves;
 	}
 
@@ -317,7 +342,7 @@ public class Pokedex {
 		System.out.println("Matchup Comparing: " + attacker + " " + defender);
 		if(defender.equals("Fainted")) {
 			
-			return 10;
+			return 11;
 		}
 		if (getType(attacker)[1] == 0) {
 			if (fullCalc(defender)[getType(attacker)[0] - 1] < 0) {
@@ -357,7 +382,7 @@ public class Pokedex {
 
 		// System.out.println(dex.getType("Gyarados")[1]);
 		// System.out.println(dex.matchupCompare("machop", "absol"));
-		String[] moves = { "bug Buzz Bug 16/16", "tackle normal 10/10", "waterfall water 10/10", "Sunny Day fire 10/10" };
+		String[] moves = { "Swords Dance electric 4/4", "tackle normal 10/10", "waterfall water 10/10", "Sunny Day fire 10/10" };
 		System.out.println(dex.moveEffect(moves)[1][0]);
 		System.out.println("done!");
 

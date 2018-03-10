@@ -90,6 +90,15 @@ public class PokePlayer {
 		return driver.findElement(selector).getText();
 	}
 
+	public static boolean canClose(WebDriver driver) {
+		  try {
+			    driver.findElement(By.cssSelector(".controls > p:nth-child(2) > button:nth-child(1)"));
+			    return true;
+			  }
+			catch (org.openqa.selenium.NoSuchElementException e) {
+			    return false;
+			  }
+			}
 	public static boolean isDisabled(WebDriver driver, By selector) {
 		WebDriverWait wait = new WebDriverWait(driver, waitTime);
 		wait.until(ExpectedConditions.presenceOfElementLocated((selector)));
@@ -245,14 +254,19 @@ public class PokePlayer {
 		// Waits to Start Battle
 		Battle battle = new Battle(1, teamArray(driver));
 		
-		while (ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".controls > p:nth-child(2) > button:nth-child(1)")) == null) {
+		while (!canClose(driver)) {
+			
 			System.out.println("Setting Team.");
 			battle.setTeam(teamArray(driver));
+			System.out.println("Here is the close button: " + canClose(driver));
 			System.out.println("Setting Moves.");
 			battle.setMoves(setMoves(driver));
+	
 			System.out.println("Finding Best Option.");
 			int change = battle.oppTest(path);
-			int choice = battle.smartAttack(path);
+			
+			int choice = battle.smartAttack(path,find(driver,By.cssSelector("div.statbar:nth-child(1) > div:nth-child(2) > div:nth-child(1)")));
+			
 			if (change != 0) {
 				click(driver, By.cssSelector(".switchmenu > button:nth-child(" + change + ")"));
 			} else if (choice == -1) {
@@ -260,6 +274,10 @@ public class PokePlayer {
 			} else if (choice > -1) {
 				click(driver, By.xpath("/html/body/div[4]/div[5]/div/div[2]/div[2]/button[" + choice + "]"));
 			}
+			//enemy hp .hptext
+			//Hp Level div.statbar:nth-child(1) > div:nth-child(2) > div:nth-child(1)
+			//Instant Replay .controls > p:nth-child(1) > button:nth-child(2)
+			//Main Menu .controls > p:nth-child(2) > button:nth-child(1)
 
 		}
 
