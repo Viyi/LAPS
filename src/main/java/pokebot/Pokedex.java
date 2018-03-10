@@ -33,9 +33,10 @@ public class Pokedex {
 	}
 
 	public int parseMove(String s) {
+		// System.out.print("Hey here is parseMove!!! " + s );
 		for (int a = 0; a < 18; a++) {
 			if (s.toLowerCase().contains(typeList[a])) {
-				return a + 1;
+				return a;
 			}
 		}
 		return -1;
@@ -87,7 +88,7 @@ public class Pokedex {
 			e.printStackTrace();
 		}
 
-		System.out.println(types[1]);
+
 		if (types[1] == types[0]) {
 			types[1] = 0;
 
@@ -184,7 +185,8 @@ public class Pokedex {
 	}
 
 	public int[] fullCalc(String name) {
-		// This method combines all weaknesses, and resistances with immunities to
+		// This method combines all weaknesses, and resistances with immunitie0,
+		// indexOf(" ")s to
 		// create a perfect index
 		// Types are ranked as ints moves greater than 0 will be super effective, moves
 		// equal to 0 will be neutral
@@ -236,15 +238,43 @@ public class Pokedex {
 
 	}
 
-	public int moveType(String move) {
-		// returns move typing by using a file
-		// currently obsolete, because parseMove, see parseMove at top of class
+	public int[][] moveEffect(String[] types) {
+		int[][] moves = new int[2][4];
+		if(types[1].equals("taco")) {
+			moves[0][0] = -1;
+			return moves;
+		}
+		for (int a = 0; a < 4; a++) {
+			moves[0][a] = parseMove(types[a]);
+		}
+	
 		String line;
+		String temp;
+		
+		for(int a = 0;a<4;a++) {
+		temp = types[a].toLowerCase();
+	
+			for(int b = 0;b<18;b++) {
+	
+				if(temp.contains(typeList[b])) {
+					
+					if(temp.substring(temp.indexOf(typeList[b])).contains(typeList[b])) {
+						
+						int spot = temp.lastIndexOf(typeList[b]);
+				
+						types[a] = temp.substring(0,spot);
+						types[a] = types[a].trim();
+					
+						
+					}else {
+						types[a] = temp.substring(0, temp.indexOf(typeList[b]));
+						
+						types[a] = types[a].trim();
+					}
+				}
+			}
+		}
 
-		int type = -1;
-		int count = 1;
-
-		int[] weaknesses = new int[18];
 		try (
 
 				// windows
@@ -257,15 +287,19 @@ public class Pokedex {
 				InputStreamReader isr = new InputStreamReader(fis, Charset.forName("UTF-8"));
 				BufferedReader br = new BufferedReader(isr);) {
 			while ((line = br.readLine()) != null) {
-				if (line.toLowerCase().contains(move.toLowerCase())) {
-					for (int a = 0; a < 18; a++) {
-						if (line.toLowerCase().contains(typeList[a])) {
-
-							type = a + 1;
+				line = line.toLowerCase();
+				//System.out.println(line);
+				
+				for (int a = 0; a < 4; a++) {
+					
+					if (line.indexOf(types[a])>-1) {
+						if (line.contains("status")) {
+							moves[1][a] = 0;
+						} else {
+							moves[1][a] = 1;
 						}
 					}
 				}
-				count++;
 
 			}
 		} catch (FileNotFoundException e) {
@@ -276,12 +310,15 @@ public class Pokedex {
 			e.printStackTrace();
 		}
 
-		return type;
-
+		return moves;
 	}
 
 	public int matchupCompare(String attacker, String defender) {
-
+		System.out.println("Matchup Comparing: " + attacker + " " + defender);
+		if(defender.equals("Fainted")) {
+			
+			return 10;
+		}
 		if (getType(attacker)[1] == 0) {
 			if (fullCalc(defender)[getType(attacker)[0] - 1] < 0) {
 				return -1;
@@ -318,9 +355,10 @@ public class Pokedex {
 		// Instantiate dex, and give path
 		Pokedex dex = new Pokedex("/home/viyi/Documents/pokebot");
 
-		System.out.println(dex.getType("Gyarados")[1]);
-		System.out.println(dex.matchupCompare("machop", "absol"));
-
+		// System.out.println(dex.getType("Gyarados")[1]);
+		// System.out.println(dex.matchupCompare("machop", "absol"));
+		String[] moves = { "bug Buzz Bug 16/16", "tackle normal 10/10", "waterfall water 10/10", "Sunny Day fire 10/10" };
+		System.out.println(dex.moveEffect(moves)[1][0]);
 		System.out.println("done!");
 
 	}

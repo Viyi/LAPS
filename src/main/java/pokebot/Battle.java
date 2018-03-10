@@ -1,11 +1,12 @@
 package pokebot;
 
+import java.util.Arrays;
+
 public class Battle {
 	private int playStyle = 1;
 	private String[] myTeam = new String[7];
-	private String currentPoke = "";
-	private String opponent = "";
-	private int[] moves = new int[4];
+	private int[][] moves = new int[2][4];
+	private boolean canStatus = true;
 
 	public Battle(int style, String[] team) {
 		playStyle = style;
@@ -13,10 +14,10 @@ public class Battle {
 	}
 
 	public void setTeam(String[] team) {
+		if(!myTeam[1].equals(team[1])) {
+			canStatus = true;
+		}
 		myTeam = team;
-		opponent = myTeam[0];
-		currentPoke = myTeam[1];
-
 	}
 
 	public void setStyle(int style) {
@@ -24,24 +25,26 @@ public class Battle {
 		playStyle = style;
 	}
 
-	public void setMoves(int[] m) {
+	public void setMoves(int[][] m) {
 		moves = m;
 	}
 
 	// Battle Methods
 	public int oppTest(String path) {
 		// Tests opponent vs currentPoke, switches if currentPoke is weak to opponent
-		Pokedex reference = new Pokedex(path);
+		Pokedex dex = new Pokedex(path);
 		// returns 0 if currentPoke is resilient to opponent
-		if (reference.matchupCompare(opponent, currentPoke) <= 0)
+		if (dex.matchupCompare(myTeam[0], myTeam[1]) <= 0) {
 			return 0;
+		}
+			
 		// returns location of pokemon that is most resilient to the opponent
-		int bestMatchUp = 1;
-		for (int pos = 1; pos < 7; pos++) {
-			if (reference.matchupCompare(opponent, myTeam[pos]) < reference.matchupCompare(opponent,
-					myTeam[bestMatchUp])) {
-				System.out.println("Working" + bestMatchUp);
-				bestMatchUp = pos;
+		int bestMatchUp = 2;
+		for (int pos = 2; pos < 7; pos++) {
+			if (dex.matchupCompare(myTeam[0], myTeam[pos]) <= dex.matchupCompare(myTeam[0],myTeam[bestMatchUp])) {
+				
+					bestMatchUp = pos;
+				
 			}
 		}
 		// returns 0(keeps currentPoke) if there isn't a better option
@@ -49,41 +52,98 @@ public class Battle {
 		return bestMatchUp;
 	}
 
+	
+	public int faintSwitch(String path) {
+Pokedex dex = new Pokedex(path);
+		
+		int bestMatchUp = 2;
+		for (int pos = 2; pos < 7; pos++) {
+			if (dex.matchupCompare(myTeam[0], myTeam[pos]) < dex.matchupCompare(myTeam[0],myTeam[bestMatchUp])) {
+			
+					bestMatchUp = pos;
+				
+				
+			}
+		}
+		return bestMatchUp;
+	}
+	
 	public int smartAttack(String path) {
 		// chooses effective attack
 		Pokedex dex = new Pokedex(path);
-		int[] weak = dex.fullCalc(myTeam[0]);
-		for (int a = 0; a < 18; a++) {
-			for (int b = 0; b < 4; b++) {
-				if (weak[a] > 1 && a == moves[b] + 1) {
-					return b + 1;
-				}
-			}
-
+		
+		if(moves[0][0] == -1) {
+			return -1;
 		}
-		for (int a = 0; a < 18; a++) {
-			for (int b = 0; b < 4; b++) {
-				if (weak[a] > 0 && a == moves[b] + 1) {
-					return b + 1;
-				}
+		System.out.println("Move Decision " + Arrays.toString(moves[1]));
+		
+		for(int a = 0;a<4;a++) {
+			int val = dex.fullCalc(myTeam[0])[moves[0][a]];
+			if(moves[1][a]==1) {
+			if(val >1) {
+				System.out.println("Attacking Move: " + (a+1) );
+				return a+1;
 			}
-		}
-		for (int a = 0; a < 18; a++) {
-			for (int b = 0; b < 4; b++) {
-				if (weak[a] > -1 && a == moves[b] + 1) {
-					return b + 1;
-				}
 			}
 		}
-		for (int a = 0; a < 18; a++) {
-			for (int b = 0; b < 4; b++) {
-				if (weak[a] > -2 && a == moves[b] + 1) {
-					return b + 1;
+		
+		for(int a = 0;a<4;a++) {
+			if(canStatus) {
+				if(moves[1][a] == 0) {
+					if(dex.fullCalc(myTeam[0])[moves[0][a]] >-1) {
+						System.out.println("Status Move: " + (a+1));
+						canStatus = false;
+						return a+1;
+					}
 				}
 			}
 		}
-
-		return 2;
+		
+		
+		for(int a = 0;a<4;a++) {
+			int val = dex.fullCalc(myTeam[0])[moves[0][a]];
+			if(moves[1][a]==1) {
+			if(val >0) {
+				System.out.println("Attacking Move: " + (a+1) );
+				return a+1;
+			}
+			}
+		}
+		
+		for(int a = 0;a<4;a++) {
+			int val = dex.fullCalc(myTeam[0])[moves[0][a]];
+			if(moves[1][a]==1) {
+			if(val >-1) {
+				System.out.println("Attacking Move: " + (a+1) );
+				return a+1;
+			}
+			}
+		}
+		
+		for(int a = 0;a<4;a++) {
+			int val = dex.fullCalc(myTeam[0])[moves[0][a]];
+			if(moves[1][a]==1) {
+			if(val >-2) {
+				System.out.println("Attacking Move: " + (a+1) );
+				return a+1;
+			}
+			}
+		}
+		
+		for(int a = 0;a<4;a++) {
+			int val = dex.fullCalc(myTeam[0])[moves[0][a]];
+			if(moves[1][a]==1) {
+			if(val >-3) {
+				System.out.println("Attacking Move: " + (a+1) );
+				return a+1;
+			}
+			}
+		}
+		
+		return 3;
+		
+		
+		
 	}
 
 }
