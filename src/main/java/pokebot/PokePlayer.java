@@ -4,6 +4,7 @@ import java.awt.List;
 import java.nio.charset.Charset;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.NoSuchElementException;
 import java.util.stream.Stream;
 
 import org.openqa.selenium.By;
@@ -30,7 +31,8 @@ import me.sargunvohra.lib.pokekotlin.model.PokemonSpeciesDexEntry;
 public class PokePlayer {
 	public static String path = "";
 	public static int waitTime = 360;
-
+	public static int enemyInt = 1;
+	public static int currentInt = 0;
 	public PokePlayer() {
 
 	}
@@ -77,6 +79,13 @@ public class PokePlayer {
 		wait.until(ExpectedConditions.elementToBeClickable(selector));
 		driver.findElement(selector).click();
 	}
+	
+	public static void click(WebDriver driver, By selector, int waiter) {
+		WebDriverWait wait = new WebDriverWait(driver, waiter);
+		// Waits until it finds the element then clicks
+		wait.until(ExpectedConditions.elementToBeClickable(selector));
+		driver.findElement(selector).click();
+	}
 
 	public static String find(WebDriver driver, By selector) {
 		WebDriverWait wait = new WebDriverWait(driver, waitTime);
@@ -92,10 +101,12 @@ public class PokePlayer {
 
 	public static boolean canClose(WebDriver driver) {
 		  try {
-			    driver.findElement(By.cssSelector(".controls > p:nth-child(2) > button:nth-child(1)"));
+			  
+			    System.out.println("Inside canClose: " + find(driver,By.cssSelector(".controls > p:nth-child(2) > button:nth-child(1)"),1));
+			    find(driver,By.cssSelector(".controls > p:nth-child(2) > button:nth-child(1)"),1);
 			    return true;
 			  }
-			catch (org.openqa.selenium.NoSuchElementException e) {
+			catch (org.openqa.selenium.TimeoutException e) {
 			    return false;
 			  }
 			}
@@ -143,12 +154,24 @@ public class PokePlayer {
 	}
 
 	public static int enemyIs(WebDriver driver) {
-		while (find(driver, By.cssSelector(".switchmenu > button:nth-child(1)")).equals("")) {
+		
+		//while (find(driver, By.cssSelector(".switchmenu > button:nth-child(1)")).equals("")) {
 
+		//}
+
+		String tempEnemy = "pikachu";
+		String tempCurrent = "azelf";
+		try {
+		tempEnemy = find(driver, By.xpath("/html/body/div[4]/div[1]/div/div[5]/div[1]/strong"),1);
+		}catch(org.openqa.selenium.TimeoutException Exception  ) {
+			
 		}
-
-		String tempEnemy = find(driver, By.xpath("/html/body/div[4]/div[1]/div/div[5]/div[1]/strong"));
-		String tempCurrent = find(driver, By.cssSelector(".switchmenu > button:nth-child(1)"));
+		try {
+			tempCurrent = find(driver, By.cssSelector(".switchmenu > button:nth-child(1)"),1);
+			}catch(org.openqa.selenium.TimeoutException Exception  ) {
+				
+			}
+		
 
 		if (!tempEnemy.equals("")) {
 			if (tempEnemy.indexOf(" L") == -1) {
@@ -174,6 +197,7 @@ public class PokePlayer {
 				// System.out.println("Returning Temp Current 2");
 				return 2;
 			}
+			
 		}
 		
 		if(tempEnemy.equals(tempEnemy2)) {
@@ -184,14 +208,26 @@ public class PokePlayer {
 		return -1;
 	}
 
-	public static String[] teamArray(WebDriver driver) {
+	public static String[] teamArray(WebDriver driver, Battle b) {
 		// creates an array of pokemon names from your team
 		String[] team = new String[7];
-		// System.out.println("Health" +
-		// find(driver,By.xpath("/html/body/div[4]/div[1]/div/div[5]/div[1]/div/div[3]/div")));
-		team[1] = find(driver, By.cssSelector(".switchmenu > button:nth-child(1)"));
+		if(canClose(driver)) {
+			team[0] = "boop";
+			System.out.println("Boop!");
+			return team;
+		}
+		
+		try {
+			team[1] = find(driver, By.cssSelector(".switchmenu > button:nth-child(1)"));
+		}catch(NoSuchElementException Exception){
+			b.faintSwitch(path);
+			team[1] = find(driver, By.cssSelector("button.disabled:nth-child(1)"));
+			
+		}
+		
 		System.out.println("Loading Current " + team[1]);
-		int enemyInt = enemyIs(driver);
+		enemyInt = enemyIs(driver);
+		
 		System.out.println("Enemy Is" + enemyInt);
 		if(enemyInt == -1) {
 			team[0] = "shuckle";
@@ -203,30 +239,23 @@ public class PokePlayer {
 		System.out.println("Loading Enemy " + team[0]);
 
 	
+		try {
 		for (int a = 2; a < 7; a++) {
 			if (isDisabled(driver, By.cssSelector(".switchmenu > button:nth-child(" + a + ")"))) {
 				team[a] = "Fainted";
 
 			} else {
-				team[a] = find(driver, By.cssSelector(".switchmenu > button:nth-child(" + a + ")"));
+				team[a] = find(driver, By.cssSelector(".switchmenu > button:nth-child(" + a + ")"),1);
 			}
 
 			System.out.println("Loading Pokemon: " + a + " " + team[a]);
 
 		}
-	
+		}catch(org.openqa.selenium.TimeoutException e) {
+			
+		}
 		return team;
 
-	}
-
-	public static boolean battleOver(WebDriver driver) {
-		// the idea here is to see if the battle is over, not working yet
-		if (ExpectedConditions
-				.elementToBeClickable(By.cssSelector(".controls > p:nth-child(2) > button:nth-child(1)")) != null) {
-			return true;
-		} else {
-			return false;
-		}
 	}
 
 	public static int[][] setMoves(WebDriver driver) {
@@ -235,10 +264,32 @@ public class PokePlayer {
 
 		String[] moveList = { "taco", "taco", "taco", "taco" };
 		// Parse move is very simple, and should be improved in the future
-		moveList[0] = find(driver, By.xpath("/html/body/div[4]/div[5]/div/div[2]/div[2]/button[1]"));
-		moveList[1] = find(driver, By.xpath("/html/body/div[4]/div[5]/div/div[2]/div[2]/button[2]"));
-		moveList[2] = find(driver, By.xpath("/html/body/div[4]/div[5]/div/div[2]/div[2]/button[3]"));
-		moveList[3] = find(driver, By.xpath("/html/body/div[4]/div[5]/div/div[2]/div[2]/button[4]"));
+		try {
+			moveList[0] = find(driver, By.xpath("/html/body/div[4]/div[5]/div/div[2]/div[2]/button[1]"),1);
+			System.out.println("1" + isDisabled(driver,By.xpath("/html/body/div[4]/div[5]/div/div[2]/div[2]/button[1]")));
+		}catch(org.openqa.selenium.TimeoutException E ){
+			
+		}
+		try {
+			moveList[1] = find(driver, By.xpath("/html/body/div[4]/div[5]/div/div[2]/div[2]/button[2]"),1);
+			System.out.println("2" + isDisabled(driver,By.xpath("/html/body/div[4]/div[5]/div/div[2]/div[2]/button[2]")));
+		}catch(org.openqa.selenium.TimeoutException Eception ){
+			
+		}
+		try {
+			moveList[2] = find(driver, By.xpath("/html/body/div[4]/div[5]/div/div[2]/div[2]/button[3]"),1);
+		}catch(org.openqa.selenium.TimeoutException Exeption  ){
+			
+		}
+		try {
+			moveList[3] = find(driver, By.xpath("/html/body/div[4]/div[5]/div/div[2]/div[2]/button[4]"),1);
+		}catch(org.openqa.selenium.TimeoutException Exction){
+			
+		}
+		System.out.println("Move List: "+Arrays.toString(moveList));
+		
+		
+		
 
 		return dex.moveEffect(moveList);
 	}
@@ -252,21 +303,33 @@ public class PokePlayer {
 		click(driver, By.cssSelector(".ps-popup > p:nth-child(1) > button:nth-child(1)"));
 		System.out.println("Timer Disabled.");
 		// Waits to Start Battle
-		Battle battle = new Battle(1, teamArray(driver));
+		Battle battle = new Battle(1, teamArray(driver,null));
 		
 		while (!canClose(driver)) {
 			
 			System.out.println("Setting Team.");
-			battle.setTeam(teamArray(driver));
+			battle.setTeam(teamArray(driver,battle));
 			System.out.println("Here is the close button: " + canClose(driver));
 			System.out.println("Setting Moves.");
 			battle.setMoves(setMoves(driver));
 	
 			System.out.println("Finding Best Option.");
-			int change = battle.oppTest(path);
+			int change = battle.oppTest(path,find(driver,By.xpath("/html/body/div[4]/div[1]/div/div[5]/div[1]/div/div[1]")));
+			try {click(driver,By.cssSelector(".megaevo"),1);}catch(org.openqa.selenium.TimeoutException e) {
+				}
 			
-			int choice = battle.smartAttack(path,find(driver,By.cssSelector("div.statbar:nth-child(1) > div:nth-child(2) > div:nth-child(1)")));
+			if(enemyInt == 1) {
+				currentInt = 1;
+			}else {
+				currentInt = 2;
+			}
 			
+			int choice = battle.smartAttack(path,find(driver,By.xpath("/html/body/div[4]/div[1]/div/div[5]/div["+currentInt+"]/div/div[1]")));
+			try {
+				//click(driver, By.cssSelector(".type-Dragon"))
+			}catch(org.openqa.selenium.TimeoutException E ){
+				
+			}
 			if (change != 0) {
 				click(driver, By.cssSelector(".switchmenu > button:nth-child(" + change + ")"));
 			} else if (choice == -1) {
@@ -274,13 +337,14 @@ public class PokePlayer {
 			} else if (choice > -1) {
 				click(driver, By.xpath("/html/body/div[4]/div[5]/div/div[2]/div[2]/button[" + choice + "]"));
 			}
+			System.out.println("Can close?: " + canClose(driver));
 			//enemy hp .hptext
 			//Hp Level div.statbar:nth-child(1) > div:nth-child(2) > div:nth-child(1)
 			//Instant Replay .controls > p:nth-child(1) > button:nth-child(2)
 			//Main Menu .controls > p:nth-child(2) > button:nth-child(1)
 
 		}
-
+		
 	}
 
 	public static void main(String[] args) {

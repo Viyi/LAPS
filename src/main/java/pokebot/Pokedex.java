@@ -312,7 +312,7 @@ public class Pokedex {
 		System.out.println(types[0]);
 		String[] specialMoves = {"Roost","Slack Off","Synthesis","Recover","Softboiled","Moonlight","Milk Drink","Morning Sun","Heal Order"};
 		for(int a = 0;a < 4;a++) {
-			if(types[a].equals("baton pass")) {
+			if(types[a].equals("baton pass")|| types[a].equals("rapid spin") || types[a].equals("roar") ) {
 				moves[1][a] = -2; 
 			}else {
 				for(int b = 0;b<specialMoves.length;b++) {
