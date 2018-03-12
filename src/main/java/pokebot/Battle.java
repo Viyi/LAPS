@@ -67,7 +67,12 @@ public class Battle {
 	public int oppTest(String path, String current) {
 		// Tests opponent vs currentPoke, switches if currentPoke is weak to opponent
 		Pokedex dex = new Pokedex(path);
-		current = current.substring(0, current.indexOf("%"));
+		try {
+			current = current.substring(0, current.indexOf("%"));
+		}catch( java.lang.StringIndexOutOfBoundsException e) {
+			return -5;
+		}
+		
 		int currentInt = Integer.parseInt(current);
 		if(currentHp < currentInt) {
 			
@@ -120,7 +125,7 @@ public class Battle {
 		
 	}
 	
-	public int smartAttack(String path,String hp) {
+	public int smartAttack(String path) {
 		// chooses effective attack
 		Pokedex dex = new Pokedex(path);
 		int optimalMove = optimalMoveType();

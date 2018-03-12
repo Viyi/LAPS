@@ -33,6 +33,7 @@ public class PokePlayer {
 	public static int waitTime = 360;
 	public static int enemyInt = 1;
 	public static int currentInt = 0;
+	public static int change = 0;
 	public PokePlayer() {
 
 	}
@@ -99,8 +100,16 @@ public class PokePlayer {
 		return driver.findElement(selector).getText();
 	}
 
+	public static void type(WebDriver driver, By selector, String input) {
+		WebDriverWait wait = new WebDriverWait(driver, waitTime);
+		// Waits until it finds the element then sends keys
+		wait.until(ExpectedConditions.elementToBeClickable(selector));
+		driver.findElement(selector).sendKeys(input);
+	}
+	
 	public static boolean canClose(WebDriver driver) {
-		  try {
+		//The idea here is for the boolean to return true when the match is over, based on the close game button  
+		try {
 			  
 			    System.out.println("Inside canClose: " + find(driver,By.cssSelector(".controls > p:nth-child(2) > button:nth-child(1)"),1));
 			    find(driver,By.cssSelector(".controls > p:nth-child(2) > button:nth-child(1)"),1);
@@ -111,6 +120,7 @@ public class PokePlayer {
 			  }
 			}
 	public static boolean isDisabled(WebDriver driver, By selector) {
+		//checks to see if an element has the "disabled" class
 		WebDriverWait wait = new WebDriverWait(driver, waitTime);
 		wait.until(ExpectedConditions.presenceOfElementLocated((selector)));
 		if (driver.findElement(selector).getAttribute("class").equals("disabled")) {
@@ -119,18 +129,18 @@ public class PokePlayer {
 			return false;
 		}
 	}
-
-	public static void type(WebDriver driver, By selector, String input) {
-		WebDriverWait wait = new WebDriverWait(driver, waitTime);
-		// Waits until it finds the element then sends keys
-		wait.until(ExpectedConditions.elementToBeClickable(selector));
-		driver.findElement(selector).sendKeys(input);
+	
+	public static void mute(WebDriver driver) {
+		// mutes the game, I'm so helpful
+		click(driver, By.cssSelector("button.icon:nth-child(2)"));
+		click(driver, By.cssSelector(".ps-popup > p:nth-child(4) > label:nth-child(1) > input:nth-child(1)"));
 	}
-
+	//Full Methods that are supposed to be run in the main, these complete sections of the whole process
+	
+	
 	public static void login(WebDriver driver) {
 		// login to pokemon showdown
 		WebDriverWait wait = new WebDriverWait(driver, waitTime);
-
 		String username = getInfo();
 		String password = username.substring(username.indexOf("-") + 1);
 		username = username.substring(0, username.indexOf("-"));
@@ -144,35 +154,35 @@ public class PokePlayer {
 		click(driver, By.cssSelector(".buttonbar > button:nth-child(1)"));
 		type(driver, By.cssSelector(".textbox"), password);
 		click(driver, By.cssSelector(".buttonbar > button:nth-child(1)"));
+		//Click ok for vpn
 		click(driver, By.cssSelector(".autofocus"));
+		mute(driver);
 	}
 
-	public static void mute(WebDriver driver) {
-		// mutes the game, I'm so helpful
-		click(driver, By.cssSelector("button.icon:nth-child(2)"));
-		click(driver, By.cssSelector(".ps-popup > p:nth-child(4) > label:nth-child(1) > input:nth-child(1)"));
-	}
+	
 
 	public static int enemyIs(WebDriver driver) {
+		//This method figures out which pokemon is the enemy by comparing it with your pokemon. 
 		
-		//while (find(driver, By.cssSelector(".switchmenu > button:nth-child(1)")).equals("")) {
-
-		//}
-
+		
+		//initialize temp Strings, with filler names
 		String tempEnemy = "pikachu";
 		String tempCurrent = "azelf";
+		
+		//Tries to find enemy at address
 		try {
 		tempEnemy = find(driver, By.xpath("/html/body/div[4]/div[1]/div/div[5]/div[1]/strong"),1);
 		}catch(org.openqa.selenium.TimeoutException Exception  ) {
 			
 		}
+		//tries to find current pokemon out at address
 		try {
 			tempCurrent = find(driver, By.cssSelector(".switchmenu > button:nth-child(1)"),1);
 			}catch(org.openqa.selenium.TimeoutException Exception  ) {
 				
 			}
 		
-
+		//If the enemy is not null, it takes away the level after its name
 		if (!tempEnemy.equals("")) {
 			if (tempEnemy.indexOf(" L") == -1) {
 
@@ -180,11 +190,14 @@ public class PokePlayer {
 				 tempEnemy = tempEnemy.substring(0, tempEnemy.indexOf(" L"));
 			}
 
+			//now compares the fixed temp enemy with the tempCurrent which has no level, because it is a button 
+			//if they turn out to be different pokemon it returns this address
 			if (!tempEnemy.equals(tempCurrent)) {
 				System.out.println("Returning Temp Current 1");
 				return 1;
 			}
 		}
+		//This part is the exact same as above, but with a different tempEnemy address
 		String tempEnemy2 = find(driver, By.xpath("/html/body/div[4]/div[1]/div/div[5]/div[2]/strong"));
 		if (!tempEnemy2.equals("")) {
 			if (tempEnemy2.indexOf(" L") == -1) {
@@ -200,42 +213,49 @@ public class PokePlayer {
 			
 		}
 		
-		if(tempEnemy.equals(tempEnemy2)) {
+		
+		if(tempEnemy2.length()<3 && tempEnemy.length()<3) {
+			
+			return -1;
+		}
+		if(tempEnemy2.equals(tempEnemy)) {
+			//if both pokemon are the same just return 1;
 			return 1;
 		}
-		// System.out.println("Returning Temp Current -1");
-		//return enemyIs(driver);
+		
 		return -1;
 	}
 
 	public static String[] teamArray(WebDriver driver, Battle b) {
 		// creates an array of pokemon names from your team
 		String[] team = new String[7];
-		if(canClose(driver)) {
-			team[0] = "boop";
-			System.out.println("Boop!");
-			return team;
-		}
-		
+		//Try to find current pokemon
 		try {
 			team[1] = find(driver, By.cssSelector(".switchmenu > button:nth-child(1)"));
 		}catch(NoSuchElementException Exception){
 			b.faintSwitch(path);
 			team[1] = find(driver, By.cssSelector("button.disabled:nth-child(1)"));
-			
-		}
+			}
 		
 		System.out.println("Loading Current " + team[1]);
 		enemyInt = enemyIs(driver);
 		
 		System.out.println("Enemy Is" + enemyInt);
 		if(enemyInt == -1) {
-			team[0] = "shuckle";
+			return team;
 		}else {
-			team[0] = find(driver, By.xpath("/html/body/div[4]/div[1]/div/div[5]/div[" + enemyInt + "]/strong"));
+			try {
+				team[0] = find(driver, By.xpath("/html/body/div[4]/div[1]/div/div[5]/div[" + enemyInt + "]/strong"),1);
+			}catch(org.openqa.selenium.TimeoutException E ){
+				b.faintSwitch(path);
+				team[0] = find(driver, By.xpath("/html/body/div[4]/div[1]/div/div[5]/div[" + enemyInt + "]/strong"));
+			}
+			
+		}
+		if(!team[0].equals("Unown")) {
+			team[0] = team[0].substring(0, team[0].indexOf(" L"));
 		}
 		
-		team[0] = team[0].substring(0, team[0].indexOf(" L"));
 		System.out.println("Loading Enemy " + team[0]);
 
 	
@@ -263,7 +283,7 @@ public class PokePlayer {
 		Pokedex dex = new Pokedex(path);
 
 		String[] moveList = { "taco", "taco", "taco", "taco" };
-		// Parse move is very simple, and should be improved in the future
+		
 		try {
 			moveList[0] = find(driver, By.xpath("/html/body/div[4]/div[5]/div/div[2]/div[2]/button[1]"),1);
 			System.out.println("1" + isDisabled(driver,By.xpath("/html/body/div[4]/div[5]/div/div[2]/div[2]/button[1]")));
@@ -286,7 +306,7 @@ public class PokePlayer {
 		}catch(org.openqa.selenium.TimeoutException Exction){
 			
 		}
-		System.out.println("Move List: "+Arrays.toString(moveList));
+	
 		
 		
 		
@@ -309,39 +329,62 @@ public class PokePlayer {
 			
 			System.out.println("Setting Team.");
 			battle.setTeam(teamArray(driver,battle));
+			if(enemyInt == -1) {
+				click(driver, By.cssSelector(".switchmenu > button:nth-child(" + battle.faintSwitch(path) + ")"));
+				battle.setTeam(teamArray(driver,battle));
+			}
 			System.out.println("Here is the close button: " + canClose(driver));
-			System.out.println("Setting Moves.");
-			battle.setMoves(setMoves(driver));
 	
+	
+			
+			
+			
+			
+			
+			if(enemyInt == 1) {
+				currentInt = 2;
+			}else {
+				currentInt = 1;
+			}
 			System.out.println("Finding Best Option.");
-			int change = battle.oppTest(path,find(driver,By.xpath("/html/body/div[4]/div[1]/div/div[5]/div[1]/div/div[1]")));
+			
+			try {
+				change = battle.oppTest(path,find(driver,By.xpath("/html/body/div[4]/div[1]/div/div[5]/div["+currentInt+"]/div/div[1]"),1));
+			}catch(org.openqa.selenium.TimeoutException E ){
+				System.out.println("Triggered!");
+				click(driver, By.cssSelector(".switchmenu > button:nth-child(" + battle.faintSwitch(path) + ")"));
+				while(find(driver,By.xpath("/html/body/div[4]/div[1]/div/div[5]/div["+currentInt+"]/div/div[1]")).equals("")) {
+					
+				}
+				change = battle.oppTest(path,find(driver,By.xpath("/html/body/div[4]/div[1]/div/div[5]/div["+currentInt+"]/div/div[1]"),1));
+			}
+			
 			try {click(driver,By.cssSelector(".megaevo"),1);}catch(org.openqa.selenium.TimeoutException e) {
 				}
 			
-			if(enemyInt == 1) {
-				currentInt = 1;
-			}else {
-				currentInt = 2;
-			}
+			System.out.println("Setting Moves.");
+			battle.setMoves(setMoves(driver));
+			System.out.println("Choosing Attack");
 			
-			int choice = battle.smartAttack(path,find(driver,By.xpath("/html/body/div[4]/div[1]/div/div[5]/div["+currentInt+"]/div/div[1]")));
+			int choice = battle.smartAttack(path);
 			try {
 				//click(driver, By.cssSelector(".type-Dragon"))
 			}catch(org.openqa.selenium.TimeoutException E ){
 				
 			}
+			
 			if (change != 0) {
 				click(driver, By.cssSelector(".switchmenu > button:nth-child(" + change + ")"));
-			} else if (choice == -1) {
-				click(driver, By.cssSelector(".switchmenu > button:nth-child(" + battle.faintSwitch(path) + ")"));
 			} else if (choice > -1) {
 				click(driver, By.xpath("/html/body/div[4]/div[5]/div/div[2]/div[2]/button[" + choice + "]"));
 			}
-			System.out.println("Can close?: " + canClose(driver));
-			//enemy hp .hptext
-			//Hp Level div.statbar:nth-child(1) > div:nth-child(2) > div:nth-child(1)
-			//Instant Replay .controls > p:nth-child(1) > button:nth-child(2)
-			//Main Menu .controls > p:nth-child(2) > button:nth-child(1)
+			
+			//while()
+			try {
+				System.out.println("timer says" + find(driver, By.cssSelector(".timerbutton"),1));
+			}catch(org.openqa.selenium.TimeoutException E ){
+				break;
+			}
 
 		}
 		
@@ -358,7 +401,6 @@ public class PokePlayer {
 		WebDriver driver = new FirefoxDriver();
 
 		login(driver);
-		mute(driver);
 
 		battle(driver);
 
