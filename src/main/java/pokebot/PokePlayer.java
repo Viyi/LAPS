@@ -51,10 +51,9 @@ public class PokePlayer {
 		try (
 
 				// windows
-				// InputStream fis = new FileInputStream("C:\\Program
-				// Files\\pokebot\\login.txt");
+				InputStream fis = new FileInputStream("C:\\ProgramFiles\\pokebot\\login.txt");
 				// linux
-				InputStream fis = new FileInputStream(path + "/login");
+				//InputStream fis = new FileInputStream(path + "/login");
 
 				InputStreamReader isr = new InputStreamReader(fis, Charset.forName("UTF-8"));
 				BufferedReader br = new BufferedReader(isr);) {
@@ -391,13 +390,13 @@ public class PokePlayer {
 	}
 
 	public static void main(String[] args) {
-		setPath("/home/viyi/Documents/pokebot");
+		//setPath("/home/viyi/Documents/pokebot");
+		setPath("C:\\Program Files\\pokebot");
 		// loads up gecko driver, and starts firefox
 		// windows
-		// System.setProperty("webdriver.gecko.driver","C:\\Program
-		// Files\\pokebot\\geckodriver.exe");
+		System.setProperty("webdriver.gecko.driver","C:\\Program Files\\pokebot\\geckodriver.exe");
 		// linux
-		System.setProperty("webdriver.gecko.driver", path + "/geckodriver");
+		//System.setProperty("webdriver.gecko.driver", path + "/geckodriver");
 		WebDriver driver = new FirefoxDriver();
 
 		login(driver);
