@@ -153,7 +153,7 @@ public class PokePlayer {
 				String password = " ";
 		// login to pokemon showdown
 		WebDriverWait wait = new WebDriverWait(driver, waitTime);
-		if(settings[0].equals("true")) {
+		if(settings[0].equals("false")) {
 			username = getInfo();
 			 password = username.substring(username.indexOf("-") + 1);
 			username = username.substring(0, username.indexOf("-"));
@@ -256,7 +256,7 @@ public class PokePlayer {
 		try {
 			team[1] = find(driver, By.cssSelector(".switchmenu > button:nth-child(1)"));
 		}catch(NoSuchElementException Exception){
-			b.faintSwitch(path);
+			click(driver, By.cssSelector(".switchmenu > button:nth-child(" + b.faintSwitch(path) + ")"));
 			team[1] = find(driver, By.cssSelector("button.disabled:nth-child(1)"));
 			}
 		
@@ -270,7 +270,7 @@ public class PokePlayer {
 			try {
 				team[0] = find(driver, By.xpath("/html/body/div[4]/div[1]/div/div[5]/div[" + enemyInt + "]/strong"),1);
 			}catch(org.openqa.selenium.TimeoutException E ){
-				b.faintSwitch(path);
+				click(driver, By.cssSelector(".switchmenu > button:nth-child(" + b.faintSwitch(path) + ")"));
 				team[0] = find(driver, By.xpath("/html/body/div[4]/div[1]/div/div[5]/div[" + enemyInt + "]/strong"));
 			}
 			
@@ -346,7 +346,14 @@ public class PokePlayer {
 		click(driver, By.cssSelector(".ps-popup > p:nth-child(1) > button:nth-child(1)"));
 		System.out.println("Timer Disabled.");
 		// Waits to Start Battle
-		Battle battle = new Battle(1, teamArray(driver,null));
+		int playstyle = 0;
+		if(settings[5].equals("true")) {
+			playstyle = 1;
+			System.out.println("Aggressive Playstyle");
+		}else {
+			System.out.println("Tactical Playstyle");
+		}
+		Battle battle = new Battle(playstyle, null);
 		
 		while (!canClose(driver)) {
 			
@@ -411,6 +418,9 @@ public class PokePlayer {
 
 		}
 		
+		click(driver, By.cssSelector(".controls > p:nth-child(2) > button:nth-child(1)"));
+		click(driver, By.cssSelector(".big"));
+		
 	}
 
 	public static void main(String[] args) {
@@ -421,7 +431,7 @@ public class PokePlayer {
 			
 			while(window.chckbxStartGame.isSelected() != true) {
 				try {
-				       Thread.sleep(200);
+				       Thread.sleep(50);
 				    } catch(InterruptedException e) {
 				    }
 				if(window.chckbxStartGame.isSelected()) {
@@ -444,7 +454,10 @@ public class PokePlayer {
 
 		player.login(driver);
 
-		player.battle(driver);
+		for(int a = 0;a<5;a++) {
+			player.battle(driver);
+		}
+		
 
 		System.out.println("done!");
 

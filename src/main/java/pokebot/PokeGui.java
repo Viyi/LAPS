@@ -47,6 +47,8 @@ public class PokeGui {
 	JCheckBox chckbxProxy = new JCheckBox("Proxy");
 	JCheckBox chckbxMute = new JCheckBox("Mute");
 	JCheckBox chckbxStartGame = new JCheckBox("Start Game");
+	JCheckBox chckbxCustom = new JCheckBox("Custom");
+	JCheckBox chckbxAggressive = new JCheckBox("Aggressive");
 	private int ready = 0;
 	public int getReady() {
 		return ready;
@@ -83,12 +85,12 @@ public class PokeGui {
 	 * Initialize the contents of the frame.
 	 */
 	public void setSettings() {
-		settings[0] = "" + chckbxDefault.isSelected();
+		settings[0] = "" + chckbxCustom.isSelected();
 		settings[1] = textField.getText();
 		settings[2] = new String(passwordField.getPassword());
 		settings[3] = "" + chckbxProxy.isSelected();
 		settings[4] = "" + chckbxMute.isSelected();
-	
+		settings[5] = "" + chckbxAggressive.isSelected();
 		
 		
 	}
@@ -118,7 +120,7 @@ public class PokeGui {
 		chckbxDefault.setBounds(6, 55, 97, 23);
 		frame.getContentPane().add(chckbxDefault);
 		
-		JCheckBox chckbxCustom = new JCheckBox("Custom");
+		
 		chckbxCustom.setBounds(6, 81, 97, 23);
 		frame.getContentPane().add(chckbxCustom);
 		
@@ -126,7 +128,7 @@ public class PokeGui {
 		lblPlaystyle.setBounds(10, 184, 93, 14);
 		frame.getContentPane().add(lblPlaystyle);
 		
-		JCheckBox chckbxAggressive = new JCheckBox("Aggressive");
+		
 		chckbxAggressive.setBounds(10, 205, 114, 23);
 		frame.getContentPane().add(chckbxAggressive);
 		

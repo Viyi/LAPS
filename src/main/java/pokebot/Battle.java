@@ -18,19 +18,30 @@ public class Battle {
 	}
 
 	public void setTeam(String[] team) {
+	 if(myTeam != null) {
 		if(!myTeam[1].equals(team[1])) {
 			canStatus = true;
 			boost = 0;
 			lastMove = -1;
 			
 		}
-	
+	 }
 		myTeam = team;
-	}
 	
+	}
 	
 	public int optimalMoveType() {
 	
+		if(playStyle == 1) {
+			if(currentHp < 50 && amountTaken < 49) {
+				return 3;
+			}else {
+				return 1;
+			}
+		}
+		
+		
+		
 		if(currentHp == 100) {
 			return -1;
 		}
