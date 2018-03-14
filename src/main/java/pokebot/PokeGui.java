@@ -27,13 +27,34 @@ import javax.swing.JDesktopPane;
 import javax.swing.JInternalFrame;
 import javax.swing.JSplitPane;
 import javax.swing.JButton;
+import javax.swing.JPasswordField;
+import javax.swing.JComboBox;
+import javax.swing.JSpinner;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class PokeGui {
 
-	private JFrame frame;
-	private JTextField txtUsername;
-	private JTextField txtPasssword;
-	private JTextField txtToPlay;
+	public JFrame frame;
+	public void setFrame(JFrame frame) {
+		this.frame = frame;
+	}
+
+	private JPasswordField passwordField;
+	private JTextField textField;
+	String[] settings = new String[8];
+	JCheckBox chckbxDefault = new JCheckBox("Default");
+	JCheckBox chckbxProxy = new JCheckBox("Proxy");
+	JCheckBox chckbxMute = new JCheckBox("Mute");
+	JCheckBox chckbxStartGame = new JCheckBox("Start Game");
+	private int ready = 0;
+	public int getReady() {
+		return ready;
+	}
+
+	public void setReady(int ready) {
+		this.ready = ready;
+	}
 
 	/**
 	 * Launch the application.
@@ -61,15 +82,39 @@ public class PokeGui {
 	/**
 	 * Initialize the contents of the frame.
 	 */
+	public void setSettings() {
+		settings[0] = "" + chckbxDefault.isSelected();
+		settings[1] = textField.getText();
+		settings[2] = new String(passwordField.getPassword());
+		settings[3] = "" + chckbxProxy.isSelected();
+		settings[4] = "" + chckbxMute.isSelected();
+	
+		
+		
+	}
+	public JFrame getFrame() {
+		return frame;
+	}
+	public String[] getSettings() {
+		
+		
+		return settings;
+	}
+	
 	private void initialize() {
 		frame = new JFrame();
 		frame.getContentPane().setLayout(null);
+		frame.setAlwaysOnTop(true);
+		frame.setSize(250,480);
+	
+		
+		
 		
 		JLabel lblLaps = new JLabel("LAPS");
 		lblLaps.setBounds(10, 11, 415, 52);
 		frame.getContentPane().add(lblLaps);
 		
-		JCheckBox chckbxDefault = new JCheckBox("Default");
+		
 		chckbxDefault.setBounds(6, 55, 97, 23);
 		frame.getContentPane().add(chckbxDefault);
 		
@@ -77,46 +122,59 @@ public class PokeGui {
 		chckbxCustom.setBounds(6, 81, 97, 23);
 		frame.getContentPane().add(chckbxCustom);
 		
-		txtUsername = new JTextField();
-		txtUsername.setText("Username:");
-		txtUsername.setBounds(10, 117, 86, 20);
-		frame.getContentPane().add(txtUsername);
-		txtUsername.setColumns(10);
-		
-		txtPasssword = new JTextField();
-		txtPasssword.setText("Passsword:");
-		txtPasssword.setBounds(10, 142, 86, 20);
-		frame.getContentPane().add(txtPasssword);
-		txtPasssword.setColumns(10);
-		
 		JLabel lblPlaystyle = new JLabel("Playstyle:");
 		lblPlaystyle.setBounds(10, 184, 93, 14);
 		frame.getContentPane().add(lblPlaystyle);
 		
 		JCheckBox chckbxAggressive = new JCheckBox("Aggressive");
-		chckbxAggressive.setBounds(6, 205, 97, 23);
+		chckbxAggressive.setBounds(10, 205, 114, 23);
 		frame.getContentPane().add(chckbxAggressive);
 		
 		JCheckBox chckbxTactical = new JCheckBox("Tactical");
-		chckbxTactical.setBounds(6, 231, 97, 23);
+		chckbxTactical.setBounds(10, 232, 97, 23);
 		frame.getContentPane().add(chckbxTactical);
 		
-		JButton btnMute = new JButton("Mute");
-		btnMute.setBounds(10, 283, 89, 23);
-		frame.getContentPane().add(btnMute);
 		
-		JCheckBox chckbxProxy = new JCheckBox("Proxy");
-		chckbxProxy.setBounds(10, 329, 97, 23);
+		chckbxProxy.setBounds(10, 285, 97, 23);
 		frame.getContentPane().add(chckbxProxy);
 		
 		JCheckBox chckbxInfinite = new JCheckBox("Infinite");
-		chckbxInfinite.setBounds(10, 355, 97, 23);
+		chckbxInfinite.setBounds(6, 377, 97, 23);
 		frame.getContentPane().add(chckbxInfinite);
 		
-		txtToPlay = new JTextField();
-		txtToPlay.setText("# to play:");
-		txtToPlay.setBounds(10, 385, 86, 20);
-		frame.getContentPane().add(txtToPlay);
-		txtToPlay.setColumns(10);
+		passwordField = new JPasswordField();
+		passwordField.setBounds(10, 153, 86, 19);
+		frame.getContentPane().add(passwordField);
+		
+		textField = new JTextField();
+		textField.setBounds(10, 122, 86, 19);
+		frame.getContentPane().add(textField);
+		textField.setColumns(10);
+		
+		JLabel lblUsername = new JLabel("Username");
+		lblUsername.setBounds(10, 107, 89, 15);
+		frame.getContentPane().add(lblUsername);
+		
+		JLabel lblPassword = new JLabel("Password");
+		lblPassword.setBounds(12, 139, 70, 15);
+		frame.getContentPane().add(lblPassword);
+		
+		
+		chckbxMute.setBounds(10, 258, 129, 23);
+		frame.getContentPane().add(chckbxMute);
+		
+		JLabel lblOfGames = new JLabel("# of games");
+		lblOfGames.setBounds(12, 328, 91, 15);
+		frame.getContentPane().add(lblOfGames);
+		
+		JSpinner spinner = new JSpinner();
+		spinner.setBounds(10, 349, 29, 20);
+		frame.getContentPane().add(spinner);
+		
+		
+		chckbxStartGame.setBounds(54, 409, 129, 23);
+		frame.getContentPane().add(chckbxStartGame);
+		
+		
 	}
 }

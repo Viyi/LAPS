@@ -29,20 +29,31 @@ import me.sargunvohra.lib.pokekotlin.model.PokemonSpecies;
 import me.sargunvohra.lib.pokekotlin.model.PokemonSpeciesDexEntry;
 
 public class PokePlayer {
-	public static String path = "";
-	public static int waitTime = 360;
-	public static int enemyInt = 1;
-	public static int currentInt = 0;
-	public static int change = 0;
+	public String path = "";
+	public int waitTime = 360;
+	public int enemyInt = 1;
+	public int currentInt = 0;
+	public int change = 0;
+	public String[] settings = new String[8];
 	public PokePlayer() {
 
 	}
 
-	public static void setPath(String s) {
+	public PokePlayer(String[] set) {
+		for(int a = 0;a<set.length;a++) {
+			settings[a] = set[a];
+			System.out.println(settings[a]);
+		}
+		
+	}
+	
+	public void setPath(String s) {
 		path = s;
 	}
 
-	public static String getInfo() {
+	
+	
+	public String getInfo() {
 		// This method loads username and password into a string for use with login()
 		// it reads a login.txt located in Program Files/pokebot
 		// Place your login file there
@@ -51,9 +62,9 @@ public class PokePlayer {
 		try (
 
 				// windows
-				InputStream fis = new FileInputStream("C:\\ProgramFiles\\pokebot\\login.txt");
+				//InputStream fis = new FileInputStream("C:\\ProgramFiles\\pokebot\\login.txt");
 				// linux
-				//InputStream fis = new FileInputStream(path + "/login");
+				InputStream fis = new FileInputStream(path + "/login");
 
 				InputStreamReader isr = new InputStreamReader(fis, Charset.forName("UTF-8"));
 				BufferedReader br = new BufferedReader(isr);) {
@@ -73,40 +84,40 @@ public class PokePlayer {
 		return full;
 	}
 
-	public static void click(WebDriver driver, By selector) {
+	public void click(WebDriver driver, By selector) {
 		WebDriverWait wait = new WebDriverWait(driver, waitTime);
 		// Waits until it finds the element then clicks
 		wait.until(ExpectedConditions.elementToBeClickable(selector));
 		driver.findElement(selector).click();
 	}
 	
-	public static void click(WebDriver driver, By selector, int waiter) {
+	public  void click(WebDriver driver, By selector, int waiter) {
 		WebDriverWait wait = new WebDriverWait(driver, waiter);
 		// Waits until it finds the element then clicks
 		wait.until(ExpectedConditions.elementToBeClickable(selector));
 		driver.findElement(selector).click();
 	}
 
-	public static String find(WebDriver driver, By selector) {
+	public String find(WebDriver driver, By selector) {
 		WebDriverWait wait = new WebDriverWait(driver, waitTime);
 		wait.until(ExpectedConditions.presenceOfElementLocated((selector)));
 		return driver.findElement(selector).getText();
 	}
 
-	public static String find(WebDriver driver, By selector, int waiter) {
+	public String find(WebDriver driver, By selector, int waiter) {
 		WebDriverWait wait = new WebDriverWait(driver, waiter);
 		wait.until(ExpectedConditions.presenceOfElementLocated((selector)));
 		return driver.findElement(selector).getText();
 	}
 
-	public static void type(WebDriver driver, By selector, String input) {
+	public void type(WebDriver driver, By selector, String input) {
 		WebDriverWait wait = new WebDriverWait(driver, waitTime);
 		// Waits until it finds the element then sends keys
 		wait.until(ExpectedConditions.elementToBeClickable(selector));
 		driver.findElement(selector).sendKeys(input);
 	}
 	
-	public static boolean canClose(WebDriver driver) {
+	public boolean canClose(WebDriver driver) {
 		//The idea here is for the boolean to return true when the match is over, based on the close game button  
 		try {
 			  
@@ -118,7 +129,7 @@ public class PokePlayer {
 			    return false;
 			  }
 			}
-	public static boolean isDisabled(WebDriver driver, By selector) {
+	public boolean isDisabled(WebDriver driver, By selector) {
 		//checks to see if an element has the "disabled" class
 		WebDriverWait wait = new WebDriverWait(driver, waitTime);
 		wait.until(ExpectedConditions.presenceOfElementLocated((selector)));
@@ -129,7 +140,7 @@ public class PokePlayer {
 		}
 	}
 	
-	public static void mute(WebDriver driver) {
+	public void mute(WebDriver driver) {
 		// mutes the game, I'm so helpful
 		click(driver, By.cssSelector("button.icon:nth-child(2)"));
 		click(driver, By.cssSelector(".ps-popup > p:nth-child(4) > label:nth-child(1) > input:nth-child(1)"));
@@ -137,12 +148,20 @@ public class PokePlayer {
 	//Full Methods that are supposed to be run in the main, these complete sections of the whole process
 	
 	
-	public static void login(WebDriver driver) {
+	public void login(WebDriver driver) {
+		String username = " ";
+				String password = " ";
 		// login to pokemon showdown
 		WebDriverWait wait = new WebDriverWait(driver, waitTime);
-		String username = getInfo();
-		String password = username.substring(username.indexOf("-") + 1);
-		username = username.substring(0, username.indexOf("-"));
+		if(settings[0].equals("true")) {
+			username = getInfo();
+			 password = username.substring(username.indexOf("-") + 1);
+			username = username.substring(0, username.indexOf("-"));
+		}else {
+			 username = settings[1];
+			 password = settings[2];
+		}
+		
 		System.out.println(username);
 		System.out.println(password);
 		// get password from file
@@ -154,13 +173,18 @@ public class PokePlayer {
 		type(driver, By.cssSelector(".textbox"), password);
 		click(driver, By.cssSelector(".buttonbar > button:nth-child(1)"));
 		//Click ok for vpn
-		click(driver, By.cssSelector(".autofocus"));
-		mute(driver);
+		if(settings[3].equals("true")) {
+			click(driver, By.cssSelector(".autofocus"));
+		}
+		if(settings[4].equals("true")){
+			mute(driver);
+		}
+		
 	}
 
 	
 
-	public static int enemyIs(WebDriver driver) {
+	public int enemyIs(WebDriver driver) {
 		//This method figures out which pokemon is the enemy by comparing it with your pokemon. 
 		
 		
@@ -225,7 +249,7 @@ public class PokePlayer {
 		return -1;
 	}
 
-	public static String[] teamArray(WebDriver driver, Battle b) {
+	public String[] teamArray(WebDriver driver, Battle b) {
 		// creates an array of pokemon names from your team
 		String[] team = new String[7];
 		//Try to find current pokemon
@@ -277,7 +301,7 @@ public class PokePlayer {
 
 	}
 
-	public static int[][] setMoves(WebDriver driver) {
+	public int[][] setMoves(WebDriver driver) {
 		// This method looks at pokemons moves, and makes an array of all the types!
 		Pokedex dex = new Pokedex(path);
 
@@ -313,7 +337,7 @@ public class PokePlayer {
 		return dex.moveEffect(moveList);
 	}
 
-	public static void battle(WebDriver driver) {
+	public void battle(WebDriver driver) {
 		// Sets timer
 		
 		click(driver, By.cssSelector(".big"));
@@ -390,18 +414,37 @@ public class PokePlayer {
 	}
 
 	public static void main(String[] args) {
-		//setPath("/home/viyi/Documents/pokebot");
-		setPath("C:\\Program Files\\pokebot");
+		String[] fun = null;
+		
+			PokeGui window = new PokeGui();
+			window.frame.setVisible(true);
+			
+			while(window.chckbxStartGame.isSelected() != true) {
+				try {
+				       Thread.sleep(200);
+				    } catch(InterruptedException e) {
+				    }
+				if(window.chckbxStartGame.isSelected()) {
+					break;
+				}
+			}
+			window.setSettings();
+			PokePlayer player = new PokePlayer(window.getSettings());
+		
+		player.setPath("/home/viyi/Documents/pokebot");
+		
+		
+		//setPath("C:\\Program Files\\pokebot");
 		// loads up gecko driver, and starts firefox
 		// windows
-		System.setProperty("webdriver.gecko.driver","C:\\Program Files\\pokebot\\geckodriver.exe");
+		//System.setProperty("webdriver.gecko.driver","C:\\Program Files\\pokebot\\geckodriver.exe");
 		// linux
-		//System.setProperty("webdriver.gecko.driver", path + "/geckodriver");
+		System.setProperty("webdriver.gecko.driver", player.path + "/geckodriver");
 		WebDriver driver = new FirefoxDriver();
 
-		login(driver);
+		player.login(driver);
 
-		battle(driver);
+		player.battle(driver);
 
 		System.out.println("done!");
 
